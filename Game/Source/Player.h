@@ -1,12 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>		//for Graphics stuff
+#include "ParticleSystem.h"
 
 class Player
 {
 	private:
 		sf::CircleShape body;
 		sf::CircleShape boostIndicator;
+		Emitter* trail;
 
 		int id;
 		float boost;

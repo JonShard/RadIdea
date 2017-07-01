@@ -26,7 +26,7 @@ int main ()
 						 sf::Style::Titlebar | sf::Style::Close);	
 
 	cam.setCenter(mapWidth/2.0f, mapHeight/2.0f);
-	window.setView(cam);			
+	window.setView(cam);
 	window.setFramerateLimit(60);
 
 	mapOutline.setSize(sf::Vector2f(mapWidth, mapHeight));
@@ -45,6 +45,15 @@ int main ()
 	window.setView(cam);			
 
 
+
+	players[playerCount] = new Player(playerCount);
+	playerCount++;
+
+	players[playerCount] = new Player(playerCount);
+	playerCount++;
+
+	players[playerCount] = new Player(playerCount);
+	playerCount++;
 
 	players[playerCount] = new Player(playerCount);
 	playerCount++;

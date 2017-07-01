@@ -17,9 +17,9 @@ Player::Player(int num)
 	acc = sf::Vector2f(0,0);
 	
 	rotation = 0;
-	boost = 1;
+	boost = 0.2f;
 	speed = playerMaxSpeed;
-
+ 
 
 	randomPosition(pos);
 
@@ -39,6 +39,10 @@ Player::Player(int num)
 	boostIndicator.setScale(1, 1.3f);
 
 	boostIndicator.setFillColor(sf::Color::Yellow);
+
+	trail = new Emitter(sf::Vector2f(0,0), 10000, 180, 0.0002f, 3.8f, 0.013f, 230, -0.5f, 4.0f, 0.35f, 
+               			0.1f, 0.996f, sf::Color (255, 20, 20, 225), sf::Color (20, 20, 255, 120));
+
 }
 
 
@@ -87,11 +91,14 @@ void Player::update()
 	
 	boostIndicator.setRotation(rotation);
 	boostIndicator.setPosition(pos);
+
+	trail->update(pos);
 }
 
 
 void Player::draw()
 {
+	trail->draw();
 	window.draw(body);
 	window.draw(boostIndicator);
 }
