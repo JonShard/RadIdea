@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>		//for Graphics stuff
 #include <iostream>			//Used for printing to screen(debug) and some input.
 #include "Player.h"			//The controllable player.
+#include "ParticleSystem.h"
+#include "HelpFunctions.h"
 
 #include "Constants.h"
 
@@ -12,10 +14,11 @@ sf::Font font;									//The font imported from file used to print text on Scree
 sf::Clock deltaTime;
 sf::RectangleShape mapOutline;
 
+sf::Texture shipExhaust;
+
 float dt = 0;
 int playerCount = 0;
-Player* players[4];
-
+Player* players[maxPlayers];
 
 
 
@@ -35,17 +38,21 @@ int main ()
 
 	if(font.loadFromFile("../OtherAssets/FONT.ttf"))					//Loads font from file. Gives error in console if
 	{
-		std::cout << "Loaded FONT.ttf";
+		std::cout << "\n\nLoaded FONT.ttf";
 	}
 
+	if(shipExhaust.loadFromFile("Textures/shipExhaust.png"))					//Loads font from file. Gives error in console if
+	{
+		std::cout << "\n\nLoaded shipExhaust.png";
+	}
 
-	cam.zoom(1.01f);
-	//cam.zoom(0.2f);
+	cam.zoom(1.01f);													//Zomed out.
+	//cam.zoom(0.2f);													//Zoomed in close.
 
 	window.setView(cam);			
 
 
-
+																		//Spawns 4 players.
 	players[playerCount] = new Player(playerCount);
 	playerCount++;
 
@@ -57,13 +64,13 @@ int main ()
 
 	players[playerCount] = new Player(playerCount);
 	playerCount++;
-
+	
 
 
 	//update()
 	while(window.isOpen())
 	{
-		dt = deltaTime.restart().asSeconds();
+		dt = deltaTime.restart().asSeconds();						//Counts delta-time for consistant movement independent of framerate.
 
 		
 
@@ -86,12 +93,13 @@ int main ()
 		window.clear();													//Clears the canvas.
 		window.draw(mapOutline);
 
-
-		for (int i = 0; i < playerCount; i++)
+		for (int i = 0; i < playerCount; i++)							//Update all the players.
 		{
 			players[i]->update();
 		}
-		for (int i = 0; i < playerCount; i++)
+
+
+		for (int i = 0; i < playerCount; i++)							//Draw the players.
 		{
 			players[i]->draw();
 		}

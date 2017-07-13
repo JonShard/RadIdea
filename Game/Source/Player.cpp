@@ -17,7 +17,7 @@ Player::Player(int num)
 	acc = sf::Vector2f(0,0);
 	
 	rotation = 0;
-	boost = 0.2f;
+	boost = 0.8f;
 	speed = playerMaxSpeed;
  
 
@@ -37,17 +37,15 @@ Player::Player(int num)
 	boostIndicator.setPosition(pos);
 	boostIndicator.setPointCount(3);
 	boostIndicator.setScale(1, 1.3f);
-
 	boostIndicator.setFillColor(sf::Color::Yellow);
-
-	trail = new Emitter(sf::Vector2f(0,0), 10000, 180, 0.0002f, 3.8f, 0.013f, 230, -0.5f, 4.0f, 0.35f, 
-               			0.1f, 0.996f, sf::Color (255, 20, 20, 225), sf::Color (20, 20, 255, 120));
+															//Construct tail particle effect:
+	tailPtr = new Emitter(emitterStartPosition, 30, 0.01f, 300, playerColor[id], sf::Color(200, 100, 0, 30), 0.3f, 0.1f, 0.7, 0.996f, 0.000001f);
 
 }
 
 
 void Player::update()
-{
+{															
 	float stickAngle = getAngle(sf::Vector2f(0,0),
 								sf::Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::X), 
 								sf::Joystick::getAxisPosition(id, sf::Joystick::Y)));
@@ -92,13 +90,19 @@ void Player::update()
 	boostIndicator.setRotation(rotation);
 	boostIndicator.setPosition(pos);
 
-	trail->update(pos);
+	tailPtr->update(pos);
+
 }
 
 
 void Player::draw()
 {
-	trail->draw();
+	tailPtr->draw();
 	window.draw(body);
 	window.draw(boostIndicator);
+}
+
+Player::~Player()
+{
+	delete tailPtr;
 }

@@ -1,233 +1,167 @@
 #include "ParticleSystem.h"
+#include "Constants.h"
 #include "HelpFunctions.h"
+#include <cmath>
+#include <iostream>
 
 
-extern float dt;
+extern sf::RenderWindow window;						//The window that draws the graphics on the screen.
+extern sf::Texture shipExhaust; 					//Global ship Exhaust texture from main.
+extern float dt;									//Delta-time.
 
 
-Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f emitterVel, Emitter* emitterIn)
+Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newLifeTime, sf::Color & newStartColor, sf::Color & newEndColor,
+		 float newStartScale, float newEndScale, float newAirResistance, float newRotationSpeed)
 {
-    emitter = emitterIn;
-    particeRotaionsSpeed = ((particeRotaionsSpeed * ((randomNumber(0,1)) ? (-1) : 1)) + (randomNumber(0, 10)-5))/10.0f; 
+	pos = emitterPos;
+	vel = launchVel;
+													//Copy particle settings into particle:
+	lifeTime = newLifeTime;
+	settings.startColor = newStartColor;
+	settings.endColor = newEndColor;
+	settings.startScale = newStartScale;
+	settings.endScale = newEndScale;
+	settings.airResistance = newAirResistance;
+	settings.maxRotationSpeed = newRotationSpeed;
+													//Set a random rotation value within max:
+	rotationSpeed = (settings.maxRotationSpeed * (randomNumber(0,1) ? (-1) : 1)) * ((randomNumber(2, 10))/10.0f); 
 
-	lifeSpan = startLifeTime;
-	
-	body.setOrigin(sf::Vector2f(texture.getSize().x/2.0f, texture.getSize().y/2.0f));
-	body.setTexture(texture);
-	body.setScale(startScale, startScale);
+	sprite.setTexture(shipExhaust);					//Set up sprite:
+	sprite.setColor(settings.startColor);
+	sprite.setOrigin(sf::Vector2f(sprite.getTexture()->getSize().x/2.0f, sprite.getTexture()->getSize().y/2.0f));
+	sprite.setScale(sf::Vector2f(newStartScale, newStartScale));
+	sprite.setPosition(emitterPos);
+	sprite.rotate(randomNumber(0, 360));			//Rotate to random angle to mix up apperance.
 
-    body.setPosition(emitterPos);
-
-    vel = emitterVel;
-    pos = emitterPos;
 }
 
 
-void Particle::explode()
+float Particle::update()
 {
-    emitter->removeParticle();
-}
+	vel *= settings.airResistance;
+	pos += vel * dt;
+
+	sprite.setPosition(pos);
+	sprite.rotate(rotationSpeed * dt);
 
 
-void Particle::update()
-{
-    lifeSpan -= dt;
-
-    if (lifeSpan < 0)
-    {
-        explode();
-    }
-
-    
-    float timeLeft = lifeSpan / startLifetime;	
-	sf::Color newColor = endColor;
-	newColor += sf::Color ( startColor.r * timeLeft,
-							startColor.g * timeLeft,
-							startColor.b * timeLeft,
-							startColor.a * timeLeft);
-
-	newColor -= sf::Color ( endColor.r * timeLeft,
-							endColor.g * timeLeft,
-							endColor.b * timeLeft,
-							endColor.a * timeLeft);
-	body.setColor(newColor);
-
-
-    body.setScale(endScale * timeLeft + startScale * timeLeft, endScale * timeLeft + startScale * timeLeft);
-
-
-
-   pos = body.getPosition();
-
-    vel.y -= GRAVITY;
-/*
-    switch (mode)
-    {
-        case gravity:
-            if (magnitude(mousePos, pos) < WINDRANGE)
-            {
-                vel -= clampVector(pos - mousePos, 1) * CURSORWIND*4.0f * (WINDRANGE - (magnitude(pos, mousePos)));
-            }
-            break;
-
-
-        case repultion:
-            if (magnitude(mousePos, pos) < 3*WINDRANGE/5)
-            {
-                vel += clampVector(pos - mousePos, 1) * CURSORWIND * 5.0f * (WINDRANGE - (magnitude(pos, mousePos)));
-            }
-            break;
-
-
-        case wind:
-                vel += clampVector(emitterStartPosition - mousePos, 1) * CURSORWIND * 75.0f;
-            break;
-
-
-        case freeze:
-            if (magnitude(mousePos, pos) < WINDRANGE/2)
-            {
-                vel *= 1.0f -  std::pow(magnitude(pos, mousePos) / WINDRANGE, 3);
-            }
-            break;
-    }
-    */
-    
-	vel *= AIRRESISTANCE;
-
-    
-
-
-    if ((pos.x < 50 && vel.x < 0) || (pos.x > windowWidth - 50 && vel.x > 0))
-    {
-        vel.x *= -0.60f;
-    }
-
-    if ((pos.y < 50 && vel.y < 0) || (pos.y > windowHeight - 50 && vel.y > 0))
-    {
-        vel.y *= -0.60f;
-    }
-
-    pos += vel * dt;
-    body.setPosition(pos);
-    body.rotate(rotationSpeed);
-
+	lifeTime -= dt;									//Reduce time particle has left.
+	return lifeTime;
 }
 
 
 void Particle::draw()
 {
-    window.draw(body);
+	window.draw(sprite);
 }
+
 
 
 
 
 Emitter::Emitter()
 {
-    pos = sf::Vector2f(0,0);
-    maxParticles = 10000;
-    launchSpeed = 180;
-    particleCooldown = 0.0002f;
-    startLifeTime = 3.8f;      
-    repultionStrength = 0.013f;             
-    repultionRange = 230;           
-    downwardGravity = -0.5f;
-    particeRotaionsSpeed = 4.0f;
-    startScale = 0.35f;
-    endScale = 0.1f;
-    airRecistance = 0.996f;
-    startColor = sf::Color (255, 20, 20, 225);
-    endColor = sf::Color (20, 20, 255, 120);
 
-    particles = new Particle[maxParticles];
+	pos = emitterStartPosition;
+
+	settings.launchSpeed = LAUNCHSPEED;
+	settings.emitterCooldown = EMITTERCOOLDOWN;
+	settings.maxParticles = MAXPARTICLES;
+	settings.startColor = STARTCOLOR;
+	settings.endColor = ENDCOLOR;
+	settings.startScale = STARTSCALE;
+	settings.endScale = ENDSCALE;
+	settings.airResistance = AIRRESISTANCE;
+	settings.startLifeTime = STARTLIFETIME;
+	settings.maxRotationSpeed = MAXROTATIONSPEED;
+
+
+	cooldown = settings.emitterCooldown;
+	particleCount = 0;
 
 }
 
-
-
-Emitter::Emitter(sf::Vector2f posIn, 
-                int maxParticlesIn,
-                float launchSpeedIn,
-                float particleCooldownIn,
-                float startLifeTimeIn,                    
-                float repultionStrengthIn,                
-                float repultionRangeIn,                 
-                float downwardGravityIn,
-                float particeRotaionsSpeedIn,
-                float startScaleIn,
-                float endScaleIn,
-                float airRecistanceIn,
-                sf::Color startColorIn,
-                sf::Color endColorIn);
+Emitter::Emitter(sf::Vector2f emitterPos, float newLaunchSpeed, float newEmitterCooldown, float newMaxParticles, sf::Color newStartColor, sf::Color newEndColor,
+		 float newStartScale, float newEndScale, float newStartLifeTime, float newAirResistance, float newMaxRotationSpeed)
 {
-    pos = posIn;
-    maxParticles = maxParticlesIn;
-    launchSpeed = launchSpeedIn;
-    particleCooldown = particleCooldownIn;
-    startLifeTime =  startLifeTimeIn;
-    repultionStrength = repultionStrengthIn;
-    repultionRange = repultionRangeIn;
-    downwardGravity = downwardGravityIn;
-    particeRotaionsSpeed = particeRotaionsSpeedIn;
-    startScale = startScaleIn;
-    endScale = endScaleIn;
-    airRecistance = airRecistanceIn;
-    startColor = startColorIn;
-    endColor = endColorIn;
+	pos = emitterPos;
+
+	settings.launchSpeed = newLaunchSpeed;
+	settings.emitterCooldown = newEmitterCooldown;
+	settings.maxParticles = newMaxParticles;
+	settings.startColor = newStartColor;
+	settings.endColor = newEndColor;
+	settings.startScale = newStartScale;
+	settings.endScale = newEndScale;
+	settings.airResistance = newAirResistance;
+	settings.startLifeTime = newStartLifeTime;
+	settings.maxRotationSpeed = newMaxRotationSpeed;
+
+
+	cooldown = settings.emitterCooldown;
+	particleCount = 0;
 
 }
+
 
 void Emitter::shootParticle()
-{   
-        if (particleCount < MAXPARTICLES)
-        {
-            sf::Vector2f shootVel;
-            float angle = 0;
-            float time = 0;
-
-            particleCount++;
-            for (int i = particleCount; i > 0; i--)
-            {
-                particles[i] = particles[i - 1];       //Shift all the particles one step further to make space for new particle.
-
-            }
-
-
-            int rotation = getRandomNumber(0, 360);
-
-            shootVel.x = std::cos(rotation) * LAUNCHSPEED;
-            shootVel.y = std::sin(rotation) * LAUNCHSPEED;
-
-            particles[0] = new Particle(pos, shootVel + vel, );
-
-        }
-        else
-        {
-           // std::cout << "\n No more space for new particles, " << particleCount << " particles is maximum.";
-        }
-    
-}
-
-void Emitter::removeParticle()
 {
-    delete particles[particleCount--];
-}
-
-void Emitter::update(sf::Vector2f parrent)
-{
-	pos = parrent;
-
-    for (int i = 0; i < particleCount; i++)
+	if (particleCount < settings.maxParticles)
     {
-        particles[i]->update();
+	    sf::Vector2f shootVel;
+
+	    particleCount++;
+	    for (int i = particleCount; i > 0; i--)
+	    {
+	        particles[i] = particles[i - 1];       //Shift all the particles one step further to make space for new particle.
+
+	    }
+
+
+	    int angle = randomNumber(0, 360);			//Set a random direction to shoot the particle.
+
+	    shootVel.x = std::cos(angle) * settings.launchSpeed;
+	    shootVel.y = std::sin(angle) * settings.launchSpeed;
+
+	    sf::Vector2f shootPos = pos;
+
+	    std::cout << "\n RandomNumber (4 - 10): " << randomNumber(4,10);
+	    shootPos.x += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
+	    shootPos.y += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
+
+	    particles[0] = new Particle(shootPos, shootVel, settings.startLifeTime, settings.startColor, settings.endColor,
+		settings.startScale, settings.endScale, settings.airResistance, settings.maxRotationSpeed);
     }
+}
+
+
+void Emitter::update(sf::Vector2f parrentPos)
+{
+	
+	for (int i = 0; i < particleCount; i++)		//Go through particles, if any should be dead, kill em.
+	{
+		if (particles[i]->update() < 0) 
+		{
+			delete particles[particleCount-1];
+			particleCount--;
+		}
+	}
+
+	if (cooldown < 0)							//if done wiht cooldown, shoot new particle. 
+    {											//Note: if cooldown is less than dt. It will shoot 1 particle per frame.
+    	shootParticle();
+    	cooldown = settings.emitterCooldown;
+	}
+
+    cooldown -= particleCooldownTimer.restart().asSeconds();
+
+	pos = parrentPos;
 }
 
 void Emitter::draw()
 {
-    for (int i = 0; i < particleCount; i++)
-    {
-        particles[i]->draw();
-    }
+	for (int i = 0; i < particleCount; i++)
+	{
+		particles[i]->draw();
+	}
 }

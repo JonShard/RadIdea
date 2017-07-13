@@ -5,7 +5,7 @@
 
 int randomNumber(int min, int max)												//Random int in a range.
 {
-	return rand() + min % max;
+	return (rand() + min) % max;
 }
 
 
