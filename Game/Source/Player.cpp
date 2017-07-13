@@ -7,6 +7,7 @@
 extern sf::RenderWindow window;						//The window that draws the graphics on the screen.
 extern float dt;
 extern int playerCount;
+extern sf::Texture shieldTexture;
 
 
 Player::Player(int num)
@@ -38,6 +39,12 @@ Player::Player(int num)
 	boostIndicator.setPointCount(3);
 	boostIndicator.setScale(1, 1.3f);
 	boostIndicator.setFillColor(sf::Color::Yellow);
+
+	shield.setTexture(shieldTexture);					//Set up sprite:
+	shield.setOrigin(sf::Vector2f(shield.getTexture()->getSize().x/2.0f, shield.getTexture()->getSize().y/2.0f));
+	shield.setScale(sf::Vector2f(SHIELDSCALE, SHIELDSCALE));
+	shield.setPosition(pos);
+
 															//Construct tail particle effect:
 	tailPtr = new Emitter(emitterStartPosition, 30, 0.01f, 300, playerColor[id], sf::Color(200, 100, 0, 30), 0.3f, 0.1f, 0.7, 0.996f, 0.000001f);
 
@@ -90,6 +97,8 @@ void Player::update()
 	boostIndicator.setRotation(rotation);
 	boostIndicator.setPosition(pos);
 
+	shield.setPosition(pos);
+
 	tailPtr->update(pos);
 
 }
@@ -98,6 +107,7 @@ void Player::update()
 void Player::draw()
 {
 	tailPtr->draw();
+	window.draw(shield);
 	window.draw(body);
 	window.draw(boostIndicator);
 }

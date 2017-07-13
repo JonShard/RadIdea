@@ -58,7 +58,6 @@ void Particle::draw()
 
 
 
-
 Emitter::Emitter()
 {
 

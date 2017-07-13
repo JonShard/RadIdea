@@ -15,6 +15,8 @@ sf::Clock deltaTime;
 sf::RectangleShape mapOutline;
 
 sf::Texture shipExhaust;
+sf::Texture shieldTexture;
+
 
 float dt = 0;
 int playerCount = 0;
@@ -44,6 +46,11 @@ int main ()
 	if(shipExhaust.loadFromFile("Textures/shipExhaust.png"))					//Loads font from file. Gives error in console if
 	{
 		std::cout << "\n\nLoaded shipExhaust.png";
+	}
+
+	if(shieldTexture.loadFromFile("Textures/shield.png"))					//Loads font from file. Gives error in console if
+	{
+		std::cout << "\n\nLoaded shield.png";
 	}
 
 	cam.zoom(1.01f);													//Zomed out.

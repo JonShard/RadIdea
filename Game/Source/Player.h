@@ -10,6 +10,7 @@ class Player
 		sf::CircleShape body;
 		sf::CircleShape boostIndicator;
 		Emitter* tailPtr;
+		sf::Sprite shield;
 
 		int id;
 		float boost;
