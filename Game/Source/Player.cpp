@@ -46,7 +46,9 @@ Player::Player(int num)
 	shield.setPosition(pos);
 
 															//Construct tail particle effect:
-	tailPtr = new Emitter(emitterStartPosition, 30, 0.01f, 300, playerColor[id], sf::Color(200, 100, 0, 30), 0.3f, 0.1f, 0.7, 0.996f, 0.000001f);
+	tailPtr = new Emitter(emitterStartPosition, 35, 0.005f, 300,
+						 playerColor[id], sf::Color(255,0,0,200),
+						 0.4f, 0.22f, 0.7, 0.996f, 0.000001f);
 
 }
 

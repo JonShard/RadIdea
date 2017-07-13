@@ -33,7 +33,7 @@ const int maxPlayers = 4;
 const sf::Color playerColor[4] = {	sf::Color(51, 102, 255),
 									sf::Color(255, 0, 255),
 									sf::Color(255, 102, 0),
-									sf::Color(0, 204, 102),};
+									sf::Color(0, 204, 102)};
 
 const float SHIELDSCALE = 1.4f;
 

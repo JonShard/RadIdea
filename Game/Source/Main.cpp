@@ -45,12 +45,12 @@ int main ()
 
 	if(shipExhaust.loadFromFile("Textures/shipExhaust.png"))					//Loads font from file. Gives error in console if
 	{
-		std::cout << "\n\nLoaded shipExhaust.png";
+		std::cout << "\nLoaded shipExhaust.png";
 	}
 
 	if(shieldTexture.loadFromFile("Textures/shield.png"))					//Loads font from file. Gives error in console if
 	{
-		std::cout << "\n\nLoaded shield.png";
+		std::cout << "\nLoaded shield.png";
 	}
 
 	cam.zoom(1.01f);													//Zomed out.
@@ -59,18 +59,13 @@ int main ()
 	window.setView(cam);			
 
 
-																		//Spawns 4 players.
-	players[playerCount] = new Player(playerCount);
-	playerCount++;
+		
 
-	players[playerCount] = new Player(playerCount);
-	playerCount++;
-
-	players[playerCount] = new Player(playerCount);
-	playerCount++;
-
-	players[playerCount] = new Player(playerCount);
-	playerCount++;
+	for (int i = 0; i < maxPlayers; i++)
+	{																//Spawns players up to max.
+		players[playerCount] = new Player(playerCount);
+		playerCount++;
+	}
 	
 
 

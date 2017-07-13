@@ -16,7 +16,7 @@ Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newLif
 	pos = emitterPos;
 	vel = launchVel;
 													//Copy particle settings into particle:
-	lifeTime = newLifeTime;
+	settings.startLifeTime = newLifeTime;
 	settings.startColor = newStartColor;
 	settings.endColor = newEndColor;
 	settings.startScale = newStartScale;
@@ -25,6 +25,7 @@ Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newLif
 	settings.maxRotationSpeed = newRotationSpeed;
 													//Set a random rotation value within max:
 	rotationSpeed = (settings.maxRotationSpeed * (randomNumber(0,1) ? (-1) : 1)) * ((randomNumber(2, 10))/10.0f); 
+	lifeTime = settings.startLifeTime;
 
 	sprite.setTexture(shipExhaust);					//Set up sprite:
 	sprite.setColor(settings.startColor);
@@ -38,6 +39,31 @@ Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newLif
 
 float Particle::update()
 {
+	
+	float timeLeft = lifeTime / settings.startLifeTime;	
+	
+	sf::Color newColor = settings.endColor;
+	newColor -= sf::Color ( settings.endColor.r * timeLeft,
+							settings.endColor.g * timeLeft,
+							settings.endColor.b * timeLeft,
+							settings.endColor.a * timeLeft);
+	
+	newColor += sf::Color ( settings.startColor.r * timeLeft,
+							settings.startColor.g * timeLeft,
+							settings.startColor.b * timeLeft,
+							settings.startColor.a * timeLeft);
+
+	
+	sprite.setColor(newColor);
+
+
+    sprite.setScale(settings.endScale * timeLeft + settings.startScale * timeLeft,
+    				settings.endScale * timeLeft + settings.startScale * timeLeft);
+
+    std::cout << "\nTimeleft: " << timeLeft << "("<< lifeTime << " / " << settings.startLifeTime <<")";
+
+
+
 	vel *= settings.airResistance;
 	pos += vel * dt;
 
@@ -124,7 +150,6 @@ void Emitter::shootParticle()
 
 	    sf::Vector2f shootPos = pos;
 
-	    std::cout << "\n RandomNumber (4 - 10): " << randomNumber(4,10);
 	    shootPos.x += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
 	    shootPos.y += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
 
