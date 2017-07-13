@@ -47,7 +47,7 @@ float Particle::update()
 							settings.endColor.g * timeLeft,
 							settings.endColor.b * timeLeft,
 							settings.endColor.a * timeLeft);
-	
+
 	newColor += sf::Color ( settings.startColor.r * timeLeft,
 							settings.startColor.g * timeLeft,
 							settings.startColor.b * timeLeft,
@@ -60,7 +60,6 @@ float Particle::update()
     sprite.setScale(settings.endScale * timeLeft + settings.startScale * timeLeft,
     				settings.endScale * timeLeft + settings.startScale * timeLeft);
 
-    std::cout << "\nTimeleft: " << timeLeft << "("<< lifeTime << " / " << settings.startLifeTime <<")";
 
 
 

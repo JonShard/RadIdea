@@ -17,7 +17,7 @@ Player::Player(int num)
 	vel = sf::Vector2f(0,0);
 	acc = sf::Vector2f(0,0);
 	
-	rotation = 0;
+	shipRotation = 0;
 	boost = 0.8f;
 	speed = playerMaxSpeed;
  
@@ -55,27 +55,35 @@ Player::Player(int num)
 
 void Player::update()
 {															
-	float stickAngle = getAngle(sf::Vector2f(0,0),
+	float leftStickAngle = getAngle(sf::Vector2f(0,0),		//Get input form left stick into euler angles.
 								sf::Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::X), 
 								sf::Joystick::getAxisPosition(id, sf::Joystick::Y)));
+	float rightStickAngle = getAngle(sf::Vector2f(0,0),		//Get input form left stick into euler angles.
+								sf::Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::U), 
+								sf::Joystick::getAxisPosition(id, sf::Joystick::V)));
 
-	rotation = getAngle(sf::Vector2f(0,0), vel);
+	std::cout << "\nrightStickAngle: " << rightStickAngle 
+			  << "\t U: " << (sf::Joystick::getAxisPosition(id, sf::Joystick::U)) 
+			  << "\t V: " << (sf::Joystick::getAxisPosition(id, sf::Joystick::V));
 
-	if (std::abs(stickAngle - rotation) < 180)
+
+	shipRotation = getAngle(sf::Vector2f(0,0), vel);
+
+	if (std::abs(leftStickAngle - shipRotation) < 180)			//Steers the player left or right depending on current cource:
 	{
-		if (stickAngle < rotation)
-			vel += sf::Vector2f(std::cos(toRadians(rotation + 180)) * playerTurnSpeed, std::sin(toRadians(rotation + 180)) * playerTurnSpeed);			//Turn clockwise.
+		if (leftStickAngle < shipRotation)
+			vel += sf::Vector2f(std::cos(toRadians(shipRotation + 180)) * playerTurnSpeed, std::sin(toRadians(shipRotation + 180)) * playerTurnSpeed);			//Turn clockwise.
 		else
-			vel += sf::Vector2f(std::cos(toRadians(rotation)) * playerTurnSpeed, std::sin(toRadians(rotation)) * playerTurnSpeed);			//Turn counter clockwise.
+			vel += sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.
 	}
 
 	else
 	{
-		if (stickAngle > rotation)
+		if (leftStickAngle > shipRotation)
 		
-			vel += sf::Vector2f(std::cos(toRadians(rotation + 180)) * playerTurnSpeed, std::sin(toRadians(rotation + 180)) * playerTurnSpeed);			//Turn clockwise.
+			vel += sf::Vector2f(std::cos(toRadians(shipRotation + 180)) * playerTurnSpeed, std::sin(toRadians(shipRotation + 180)) * playerTurnSpeed);			//Turn clockwise.
 		else
-			vel += sf::Vector2f(std::cos(toRadians(rotation)) * playerTurnSpeed, std::sin(toRadians(rotation)) * playerTurnSpeed);			//Turn counter clockwise.		
+			vel += sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.		
 	}
 
 
@@ -93,12 +101,13 @@ void Player::update()
 	if((pos.y > mapHeight && vel.y > 0) || (pos.y < 0 && vel.y < 0))	vel.y *= -1;
 
 
-	body.setRotation(rotation);
+	body.setRotation(shipRotation);
 	body.setPosition(pos);
 	
-	boostIndicator.setRotation(rotation);
+	boostIndicator.setRotation(shipRotation);
 	boostIndicator.setPosition(pos);
 
+	shield.setRotation(rightStickAngle);
 	shield.setPosition(pos);
 
 	tailPtr->update(pos);

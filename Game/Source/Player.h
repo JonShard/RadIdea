@@ -15,7 +15,7 @@ class Player
 		int id;
 		float boost;
 		float speed;
-		float rotation;
+		float shipRotation;
 
 		sf::Vector2f pos;
 		sf::Vector2f vel;
