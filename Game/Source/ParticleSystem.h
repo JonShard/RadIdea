@@ -5,16 +5,17 @@
 
 struct ParticleSettings
 {
-
+		//Emitter values
 		float launchSpeed;
 		float emitterCooldown;
 		float maxParticles;
+		float emitterLifeTime;
 
+		//Particle values
 		sf::Color startColor;
 		sf::Color endColor;
 		float startScale;
 		float endScale;
-		float startLifeTime;
 		float particleLifeTime;
 		float airResistance;
 		float maxRotationSpeed;
@@ -36,7 +37,7 @@ class Particle
 
 
 	public:
-		Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newLifeTime, sf::Color & newStartColor, sf::Color & newEndColor,
+		Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newEmitterLifeTime, float newParticleLifeTime, sf::Color & newStartColor, sf::Color & newEndColor,
 		 float newStartScale, float newEndScale, float newAirResistance, float newRotationSpeed);
 
 
@@ -56,16 +57,17 @@ class Emitter
 		
 		sf::Clock particleCooldownTimer;                     //Used to time the spawns of particles.
 		float cooldown;
+		float lifeTime;
 		int particleCount;
 
 
 	public:
 		Emitter();
-		Emitter(sf::Vector2f emitterPos, float newLaunchSpeed, float newEmitterCooldown, float newMaxParticles, sf::Color newStartColor, sf::Color newEndColor,
-		float newStartScale, float newEndScale, float newStartLifeTime, float newAirResistance, float newMaxRotationSpeed);
+		Emitter(sf::Vector2f emitterPos, float newLaunchSpeed, float newEmitterCooldown, float newMaxParticles, float newEmitterLifeTime, sf::Color newStartColor, sf::Color newEndColor,
+		float newStartScale, float newEndScale, float newParticleLifeTime, float newAirResistance, float newMaxRotationSpeed);
 
 		void shootParticle();
-		void update(sf::Vector2f parrentPos);
+		bool update(sf::Vector2f parrentPos); 
 		void draw();
 };
 

@@ -23,6 +23,8 @@ int playerCount = 0;
 Player* players[maxPlayers];
 
 
+Emitter* test;
+
 
 int main ()		  														
 {
@@ -69,6 +71,11 @@ int main ()
 	
 
 
+	test = new Emitter(emitterStartPosition, 350, 0.0005f, 600, 3.0f,
+						 sf::Color::Red, sf::Color::Cyan,
+						 1.4f, 0.22f, 2, 0.996f, 0.000002f);
+
+
 	//update()
 	while(window.isOpen())
 	{
@@ -95,11 +102,23 @@ int main ()
 		window.clear();													//Clears the canvas.
 		window.draw(mapOutline);
 
+		if (test != NULL && test->update(emitterStartPosition) == false) 
+		{
+			delete test;
+			test = NULL;
+		}
+
+
 		for (int i = 0; i < playerCount; i++)							//Update all the players.
 		{
 			players[i]->update();
 		}
 
+
+		if (test != NULL)
+		{
+			test->draw();
+		}
 
 		for (int i = 0; i < playerCount; i++)							//Draw the players.
 		{

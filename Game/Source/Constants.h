@@ -49,6 +49,7 @@ const int SHIELDCOVERAGE = 60;//Degrees. How wide is the shield.
 const float LAUNCHSPEED = 180;
 const int MAXPARTICLES = 10000;
 const float EMITTERCOOLDOWN = 0.0002f;			//Time between each particle launch. 0.01f
+const float EMITTERLIFETIME = 0.0f;				//Time the emitter will remain alive. -1 = forever.
 
 const sf::Color STARTCOLOR = sf::Color (255, 20, 20, 225);
 const sf::Color ENDCOLOR = sf::Color (20, 20, 255, 120);
