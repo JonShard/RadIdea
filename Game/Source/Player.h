@@ -16,6 +16,7 @@ class Player
 		float boost;
 		float speed;
 		float shipRotation;
+		float shieldRotation;
 
 		sf::Vector2f pos;
 		sf::Vector2f vel;
@@ -23,6 +24,9 @@ class Player
 
 	public:
 		Player(int num);
+
+		bool shieldEncounter(sf::Vector2f encPos, bool projectile); //True if player blocks encounter.
+		void killPlayer();
 
 		void update();
 		void draw();

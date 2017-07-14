@@ -28,14 +28,16 @@ const float playerMaxSpeed = 1300;
 const float playerMinSpeed = 600;
 const float playerAcc = 25;
 const float playerTurnSpeed = 18;
-const int maxPlayers = 4;
+const int maxPlayers = 1;
 
 const sf::Color playerColor[4] = {	sf::Color(51, 102, 255),
 									sf::Color(255, 0, 255),
-									sf::Color(225, 142, 0),
+									sf::Color(225, 142, 80),
 									sf::Color(0, 204, 102)};
 
 const float SHIELDSCALE = 1.4f;
+const float SHIELDOPACITY = 0.8f;
+const int SHIELDCOVERAGE = 60;//Degrees. How wide is the shield.
 
 
 //Boids

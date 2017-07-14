@@ -41,6 +41,7 @@ Player::Player(int num)
 	boostIndicator.setFillColor(sf::Color::Yellow);
 
 	shield.setTexture(shieldTexture);					//Set up sprite:
+	shield.setColor(sf::Color(255,255,255, 255*SHIELDOPACITY));
 	shield.setOrigin(sf::Vector2f(shield.getTexture()->getSize().x/2.0f, shield.getTexture()->getSize().y/2.0f));
 	shield.setScale(sf::Vector2f(SHIELDSCALE, SHIELDSCALE));
 	shield.setPosition(pos);
@@ -53,6 +54,36 @@ Player::Player(int num)
 }
 
 
+
+bool Player::shieldEncounter(sf::Vector2f encPos, bool projectile) //True if player blocks encounter.
+{
+	bool playerBlocksEncounter = false;
+	int encAngle = getAngle(pos, encPos);
+
+
+	if (projectile)										//If player tries to block projectile.
+	{
+		if (std::abs(encAngle - shieldRotation) < SHIELDCOVERAGE)
+		{
+			playerBlocksEncounter = true;
+		}
+	}
+	else												//If player tries to block a ramming attack.
+	{
+		if (std::abs(((encAngle + 180) % 360) -shieldRotation) < SHIELDCOVERAGE)
+		{
+			playerBlocksEncounter = true;
+		}
+	}
+
+
+	return playerBlocksEncounter;
+}
+
+
+
+
+
 void Player::update()
 {															
 	float leftStickAngle = getAngle(sf::Vector2f(0,0),		//Get input form left stick into euler angles.
@@ -62,12 +93,8 @@ void Player::update()
 								sf::Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::U), 
 								sf::Joystick::getAxisPosition(id, sf::Joystick::V)));
 
-	std::cout << "\nrightStickAngle: " << rightStickAngle 
-			  << "\t U: " << (sf::Joystick::getAxisPosition(id, sf::Joystick::U)) 
-			  << "\t V: " << (sf::Joystick::getAxisPosition(id, sf::Joystick::V));
-
-
 	shipRotation = getAngle(sf::Vector2f(0,0), vel);
+	shieldRotation = rightStickAngle;
 
 	if (std::abs(leftStickAngle - shipRotation) < 180)			//Steers the player left or right depending on current cource:
 	{
@@ -111,6 +138,16 @@ void Player::update()
 	shield.setPosition(pos);
 
 	tailPtr->update(pos);
+
+	if (shieldEncounter(sf::Vector2f(0,0), false))
+	{
+		std::cout << "\nShield blocked encounter.";
+	}
+	else
+	{
+		std::cout << "\nShield NOT blocked encounter.";
+	}
+
 
 }
 
