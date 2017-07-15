@@ -13,6 +13,7 @@ extern sf::Texture shieldTexture;
 Player::Player(int num)
 {
 	id = num;
+	playerDead = false;
 	pos = sf::Vector2f(mapWidth/2 , mapHeight/2);
 	vel = sf::Vector2f(0,0);
 	acc = sf::Vector2f(0,0);
@@ -51,6 +52,9 @@ Player::Player(int num)
 						 playerColor[id], sf::Color(255,0,0,200),
 						 0.4f, 0.22f, 0.7, 0.996f, 0.000001f);
 
+	explotionPtr = new Emitter(emitterStartPosition, 1300, 0.0001f, 600, 0.23f,
+						 sf::Color(255,100,0), sf::Color(30,30,255),
+						 1.7f, 0.05f, 1.2, 0.979f, 0.01f);
 }
 
 
@@ -82,6 +86,12 @@ bool Player::shieldEncounter(sf::Vector2f encPos, bool projectile) //True if pla
 
 
 
+void Player::killPlayer()
+{
+	playerDead = true;
+}
+
+
 
 
 void Player::update()
@@ -93,8 +103,10 @@ void Player::update()
 								sf::Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::U), 
 								sf::Joystick::getAxisPosition(id, sf::Joystick::V)));
 
+
 	shipRotation = getAngle(sf::Vector2f(0,0), vel);
 	shieldRotation = rightStickAngle;
+
 
 	if (std::abs(leftStickAngle - shipRotation) < 180)			//Steers the player left or right depending on current cource:
 	{
@@ -103,7 +115,6 @@ void Player::update()
 		else
 			vel += sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.
 	}
-
 	else
 	{
 		if (leftStickAngle > shipRotation)
@@ -124,8 +135,10 @@ void Player::update()
 	pos += vel * dt;																				//Update position.
 
 
+
 	if((pos.x > mapWidth && vel.x > 0) || (pos.x < 0 && vel.x < 0))		vel.x *= -1;				//Reflective walls.	
 	if((pos.y > mapHeight && vel.y > 0) || (pos.y < 0 && vel.y < 0))	vel.y *= -1;
+
 
 
 	body.setRotation(shipRotation);
@@ -139,13 +152,11 @@ void Player::update()
 
 	tailPtr->update(pos);
 
-	if (shieldEncounter(sf::Vector2f(0,0), false))
+
+	if (playerDead && (explotionPtr != NULL && explotionPtr->update(pos) == false)) 
 	{
-		std::cout << "\nShield blocked encounter.";
-	}
-	else
-	{
-		std::cout << "\nShield NOT blocked encounter.";
+		delete explotionPtr;
+		explotionPtr = NULL;
 	}
 
 
@@ -158,9 +169,18 @@ void Player::draw()
 	window.draw(shield);
 	window.draw(body);
 	window.draw(boostIndicator);
+
+	if (playerDead && explotionPtr != NULL)
+	{
+		explotionPtr->draw();
+	}
+		
 }
 
 Player::~Player()
 {
 	delete tailPtr;
+	
+	if (explotionPtr != NULL) 
+		delete explotionPtr;
 }

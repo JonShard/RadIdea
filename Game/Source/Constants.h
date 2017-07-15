@@ -13,7 +13,7 @@ enum State
 
 
 //Game
-
+const float buttonTimeoutTime = 0.15f;
 
 
 //Map
@@ -28,7 +28,7 @@ const float playerMaxSpeed = 1300;
 const float playerMinSpeed = 600;
 const float playerAcc = 25;
 const float playerTurnSpeed = 18;
-const int maxPlayers = 1;
+const int maxPlayers = 4;
 
 const sf::Color playerColor[4] = {	sf::Color(51, 102, 255),
 									sf::Color(255, 0, 255),

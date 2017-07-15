@@ -19,11 +19,9 @@ sf::Texture shieldTexture;
 
 
 float dt = 0;
+float buttonTimeout = 0;
 int playerCount = 0;
 Player* players[maxPlayers];
-
-
-Emitter* test;
 
 
 int main ()		  														
@@ -62,35 +60,56 @@ int main ()
 
 
 		
-
+/*
 	for (int i = 0; i < maxPlayers; i++)
 	{																//Spawns players up to max.
 		players[playerCount] = new Player(playerCount);
 		playerCount++;
 	}
-	
+*/	
 
-
-	test = new Emitter(emitterStartPosition, 350, 0.0005f, 600, 3.0f,
-						 sf::Color::Red, sf::Color::Cyan,
-						 1.4f, 0.22f, 2, 0.996f, 0.000002f);
 
 
 	//update()
 	while(window.isOpen())
 	{
 		dt = deltaTime.restart().asSeconds();						//Counts delta-time for consistant movement independent of framerate.
-
+		
+		if (buttonTimeout > 0)
+		{
+			buttonTimeout -= dt;
+		}
 		
 
 		sf::Event event;
 		while(window.pollEvent(event))									
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))				// ESC to quit.
+			if(buttonTimeout <= 0)
 			{
-				window.close();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))				// ESC to quit.
+				{
+					window.close();
+					buttonTimeout = buttonTimeoutTime;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))				// ESC to quit.
+				{
+					if (playerCount < maxPlayers)
+					{
+						players[playerCount] = new Player(playerCount);
+						playerCount++;
+						buttonTimeout = buttonTimeoutTime;
+					}
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))				// ESC to quit.
+				{
+					if (playerCount > 0)
+					{
+						players[playerCount-1] ->killPlayer();
+						buttonTimeout = buttonTimeoutTime;
+					}
+				}
 			}
-			if(event.type == sf::Event::Closed)								//If the event happening is closed:
+			if (event.type == sf::Event::Closed)								//If the event happening is closed:
 			{															//then close the window as well.
 				window.close();
 			}
@@ -102,11 +121,6 @@ int main ()
 		window.clear();													//Clears the canvas.
 		window.draw(mapOutline);
 
-		if (test != NULL && test->update(emitterStartPosition) == false) 
-		{
-			delete test;
-			test = NULL;
-		}
 
 
 		for (int i = 0; i < playerCount; i++)							//Update all the players.
@@ -114,16 +128,11 @@ int main ()
 			players[i]->update();
 		}
 
-
-		if (test != NULL)
-		{
-			test->draw();
-		}
-
 		for (int i = 0; i < playerCount; i++)							//Draw the players.
 		{
 			players[i]->draw();
 		}
+
 
 
 		window.display();												//Sends the buffer to the display.

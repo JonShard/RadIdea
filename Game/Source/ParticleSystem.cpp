@@ -179,8 +179,18 @@ bool Emitter::update(sf::Vector2f parrentPos)
     {											//Note: if cooldown is less than dt. It will shoot 1 particle per frame.
     	if(lifeTime >= 0)
     	{
-    		shootParticle();
+
     		cooldown = settings.emitterCooldown;
+    		for (int i = 1; i < 5; i++)
+    		{
+	    		if(cooldown < dt / i)	//Shoot more than 1 particle per frame if the cooldown allows it.
+	    		{
+	    			shootParticle();
+	    		}
+	    		else break;	
+    		}
+    		
+    		
   	  	}
 	}
 

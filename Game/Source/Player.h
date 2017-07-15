@@ -10,9 +10,11 @@ class Player
 		sf::CircleShape body;
 		sf::CircleShape boostIndicator;
 		Emitter* tailPtr;
+		Emitter* explotionPtr;
 		sf::Sprite shield;
 
 		int id;
+		bool playerDead;
 		float boost;
 		float speed;
 		float shipRotation;
