@@ -27,9 +27,10 @@ const float boostIndicatorRadius = 26;
 const float playerMaxSpeed = 1300;
 const float playerMinSpeed = 600;
 const float playerAcc = 25;
+const float playerDeAcc = 0.98f;
 const float playerTurnSpeed = 18;
 const int maxPlayers = 4;
-
+const sf::Color playerDeadColor = sf::Color(30, 30, 30, 10);
 const sf::Color playerColor[4] = {	sf::Color(51, 102, 255),
 									sf::Color(255, 0, 255),
 									sf::Color(225, 142, 80),

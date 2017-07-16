@@ -14,7 +14,8 @@ sf::Font font;									//The font imported from file used to print text on Scree
 sf::Clock deltaTime;
 sf::RectangleShape mapOutline;
 
-sf::Texture shipExhaust;
+sf::Texture squareParticleTexture;
+sf::Texture circleParticleTexture;
 sf::Texture shieldTexture;
 
 
@@ -43,9 +44,14 @@ int main ()
 		std::cout << "\n\nLoaded FONT.ttf";
 	}
 
-	if(shipExhaust.loadFromFile("Textures/shipExhaust.png"))					//Loads font from file. Gives error in console if
+	if(squareParticleTexture.loadFromFile("Textures/squareParticle.png"))					//Loads font from file. Gives error in console if
 	{
-		std::cout << "\nLoaded shipExhaust.png";
+		std::cout << "\nLoaded squareParticle.png";
+	}
+
+	if(circleParticleTexture.loadFromFile("Textures/circleParticle.png"))					//Loads font from file. Gives error in console if
+	{
+		std::cout << "\nLoaded circleParticle.png";
 	}
 
 	if(shieldTexture.loadFromFile("Textures/shield.png"))					//Loads font from file. Gives error in console if

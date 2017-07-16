@@ -5,13 +5,14 @@
 
 struct ParticleSettings
 {
-		//Emitter values
+							//Emitter values
 		float launchSpeed;
 		float emitterCooldown;
 		float maxParticles;
 		float emitterLifeTime;
 
-		//Particle values
+							//Particle values
+		sf::Texture particleTexture;
 		sf::Color startColor;
 		sf::Color endColor;
 		float startScale;
@@ -37,10 +38,7 @@ class Particle
 
 
 	public:
-		Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newEmitterLifeTime, float newParticleLifeTime, sf::Color & newStartColor, sf::Color & newEndColor,
-		 float newStartScale, float newEndScale, float newAirResistance, float newRotationSpeed);
-
-
+		Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, ParticleSettings newSettings);
 
 		float update();
 		void draw();
@@ -63,11 +61,11 @@ class Emitter
 
 	public:
 		Emitter();
-		Emitter(sf::Vector2f emitterPos, float newLaunchSpeed, float newEmitterCooldown, float newMaxParticles, float newEmitterLifeTime, sf::Color newStartColor, sf::Color newEndColor,
-		float newStartScale, float newEndScale, float newParticleLifeTime, float newAirResistance, float newMaxRotationSpeed);
+		Emitter(sf::Vector2f emitterPos, ParticleSettings newSettings);
 
-		void shootParticle();
-		bool update(sf::Vector2f parrentPos); 
+		void changeSettings(ParticleSettings newSettings);
+		void shootParticle(sf::Vector2f grandParrentVel);
+		bool update(sf::Vector2f parrentPos, sf::Vector2f parrentVel); 
 		void draw();
 };
 

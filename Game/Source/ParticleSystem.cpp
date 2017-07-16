@@ -6,31 +6,27 @@
 
 
 extern sf::RenderWindow window;						//The window that draws the graphics on the screen.
-extern sf::Texture shipExhaust; 					//Global ship Exhaust texture from main.
 extern float dt;									//Delta-time.
+extern sf::Texture squareParticleTexture;
 
+sf::Texture standardTexture;
 
-Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, float newEmitterLifeTime, float newParticleLifeTime, sf::Color & newStartColor, sf::Color & newEndColor,
-		 float newStartScale, float newEndScale, float newAirResistance, float newRotationSpeed)
+Particle::Particle(sf::Vector2f emitterPos, sf::Vector2f launchVel, ParticleSettings newSettings)
+
 {
 	pos = emitterPos;
 	vel = launchVel;
 													//Copy particle settings into particle:
-	settings.particleLifeTime = newParticleLifeTime;
-	settings.startColor = newStartColor;
-	settings.endColor = newEndColor;
-	settings.startScale = newStartScale;
-	settings.endScale = newEndScale;
-	settings.airResistance = newAirResistance;
-	settings.maxRotationSpeed = newRotationSpeed;
+	settings = newSettings;
+
 													//Set a random rotation value within max:
 	rotationSpeed = (settings.maxRotationSpeed * (randomNumber(0,1) ? (-1) : 1)) * ((randomNumber(2, 10))/10.0f); 
 	lifeTime = settings.particleLifeTime;
 
-	sprite.setTexture(shipExhaust);					//Set up sprite:
+	sprite.setTexture(settings.particleTexture);					//Set up sprite:
 	sprite.setColor(settings.startColor);
 	sprite.setOrigin(sf::Vector2f(sprite.getTexture()->getSize().x/2.0f, sprite.getTexture()->getSize().y/2.0f));
-	sprite.setScale(sf::Vector2f(newStartScale, newStartScale));
+	sprite.setScale(sf::Vector2f(settings.startScale, settings.startScale));
 	sprite.setPosition(emitterPos);
 	sprite.rotate(randomNumber(0, 360));			//Rotate to random angle to mix up apperance.
 
@@ -57,8 +53,8 @@ float Particle::update()
 	sprite.setColor(newColor);
 
 
-    sprite.setScale(settings.endScale * timeLeft + settings.startScale * timeLeft,
-    				settings.endScale * timeLeft + settings.startScale * timeLeft);
+    sprite.setScale(settings.startScale * timeLeft + settings.endScale * (1-timeLeft),
+    				settings.startScale * timeLeft + settings.endScale * (1-timeLeft));
 
 
 
@@ -88,15 +84,16 @@ Emitter::Emitter()
 
 	pos = emitterStartPosition;
 
-	settings.launchSpeed = LAUNCHSPEED;
-	settings.emitterCooldown = EMITTERCOOLDOWN;
-	settings.maxParticles = MAXPARTICLES;
-	settings.emitterLifeTime = EMITTERLIFETIME;
-	settings.startColor = STARTCOLOR;
-	settings.endColor = ENDCOLOR;
-	settings.startScale = STARTSCALE;
-	settings.endScale = ENDSCALE;
-	settings.airResistance = AIRRESISTANCE;
+	settings.particleTexture =  squareParticleTexture;
+	settings.launchSpeed = 		LAUNCHSPEED;
+	settings.emitterCooldown = 	EMITTERCOOLDOWN;
+	settings.maxParticles = 	MAXPARTICLES;
+	settings.emitterLifeTime = 	EMITTERLIFETIME;
+	settings.startColor = 		STARTCOLOR;
+	settings.endColor = 		ENDCOLOR;
+	settings.startScale = 		STARTSCALE;
+	settings.endScale = 		ENDSCALE;
+	settings.airResistance = 	AIRRESISTANCE;
 	settings.particleLifeTime = STARTLIFETIME;
 	settings.maxRotationSpeed = MAXROTATIONSPEED;
 
@@ -107,22 +104,11 @@ Emitter::Emitter()
 
 }
 
-Emitter::Emitter(sf::Vector2f emitterPos, float newLaunchSpeed, float newEmitterCooldown, float newMaxParticles, float newEmitterLifeTime, sf::Color newStartColor, sf::Color newEndColor,
-		float newStartScale, float newEndScale, float newParticleLifeTime, float newAirResistance, float newMaxRotationSpeed)
+Emitter::Emitter(sf::Vector2f emitterPos, ParticleSettings newSettings)
 {
 	pos = emitterPos;
 
-	settings.launchSpeed = newLaunchSpeed;
-	settings.emitterCooldown = newEmitterCooldown;
-	settings.maxParticles = newMaxParticles;
-	settings.emitterLifeTime = newEmitterLifeTime;
-	settings.startColor = newStartColor;
-	settings.endColor = newEndColor;
-	settings.startScale = newStartScale;
-	settings.endScale = newEndScale;
-	settings.airResistance = newAirResistance;
-	settings.particleLifeTime = newParticleLifeTime;
-	settings.maxRotationSpeed = newMaxRotationSpeed;
+	settings = newSettings;
 
 
 	cooldown = settings.emitterCooldown;
@@ -132,7 +118,16 @@ Emitter::Emitter(sf::Vector2f emitterPos, float newLaunchSpeed, float newEmitter
 }
 
 
-void Emitter::shootParticle()
+
+void Emitter::changeSettings(ParticleSettings newSettings)
+{
+	settings = newSettings;
+}
+
+
+
+
+void Emitter::shootParticle(sf::Vector2f grandParrentVel)
 {
 	if (particleCount < settings.maxParticles)
     {
@@ -150,19 +145,19 @@ void Emitter::shootParticle()
 
 	    shootVel.x = std::cos(angle) * settings.launchSpeed;
 	    shootVel.y = std::sin(angle) * settings.launchSpeed;
+	    shootVel += grandParrentVel;
 
 	    sf::Vector2f shootPos = pos;
 
 	    shootPos.x += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
 	    shootPos.y += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
 
-	    particles[0] = new Particle(shootPos, shootVel, settings.emitterLifeTime, settings.particleLifeTime, settings.startColor, settings.endColor,
-		settings.startScale, settings.endScale, settings.airResistance, settings.maxRotationSpeed);
+	    particles[0] = new Particle(shootPos, shootVel, settings);
     }
 }
 
 
-bool Emitter::update(sf::Vector2f parrentPos)
+bool Emitter::update(sf::Vector2f parrentPos, sf::Vector2f parrentVel)
 {
 	bool emitterIsAlive = true;
 
@@ -185,7 +180,7 @@ bool Emitter::update(sf::Vector2f parrentPos)
     		{
 	    		if(cooldown < dt / i)	//Shoot more than 1 particle per frame if the cooldown allows it.
 	    		{
-	    			shootParticle();
+	    			shootParticle(parrentVel);
 	    		}
 	    		else break;	
     		}
