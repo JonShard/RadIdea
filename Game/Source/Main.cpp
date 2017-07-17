@@ -16,6 +16,7 @@ sf::RectangleShape mapOutline;
 
 sf::Texture squareParticleTexture;
 sf::Texture circleParticleTexture;
+sf::Texture bowParticleTexture;
 sf::Texture shieldTexture;
 
 
@@ -44,17 +45,22 @@ int main ()
 		std::cout << "\n\nLoaded FONT.ttf";
 	}
 
-	if(squareParticleTexture.loadFromFile("Textures/squareParticle.png"))					//Loads font from file. Gives error in console if
+	if(squareParticleTexture.loadFromFile("../Textures/squareParticle.png"))					//Loads font from file. Gives error in console if
 	{
 		std::cout << "\nLoaded squareParticle.png";
 	}
 
-	if(circleParticleTexture.loadFromFile("Textures/circleParticle.png"))					//Loads font from file. Gives error in console if
+	if(circleParticleTexture.loadFromFile("../Textures/circleParticle.png"))					//Loads font from file. Gives error in console if
 	{
 		std::cout << "\nLoaded circleParticle.png";
 	}
 
-	if(shieldTexture.loadFromFile("Textures/shield.png"))					//Loads font from file. Gives error in console if
+	if(bowParticleTexture.loadFromFile("../Textures/bowParticle.png"))					//Loads font from file. Gives error in console if
+	{
+		std::cout << "\nLoaded bowParticle.png";
+	}
+
+	if(shieldTexture.loadFromFile("../Textures/shield.png"))					//Loads font from file. Gives error in console if
 	{
 		std::cout << "\nLoaded shield.png";
 	}

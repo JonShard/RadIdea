@@ -7,7 +7,7 @@
 
 extern sf::RenderWindow window;						//The window that draws the graphics on the screen.
 extern float dt;									//Delta-time.
-extern sf::Texture squareParticleTexture;
+extern sf::Texture squareParticleTexture;			//If default constructer used. This will be used.
 
 sf::Texture standardTexture;
 

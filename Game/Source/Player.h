@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ParticleSystem.h"
+#include "Projectile.h"
 #include <SFML/Graphics.hpp>		//for Graphics stuff
 
 
@@ -13,16 +14,20 @@ class Player
 		Emitter* explotionPtr;
 		sf::Sprite shield;
 
+		Projectile* projectiles[MAXPROJECTILES];
+
 		int id;
 		bool playerDead;
 		float boost;
 		float speed;
 		float shipRotation;
 		float shieldRotation;
+		int activeProjectiles;
+		float buttonTimeout;
+
 
 		sf::Vector2f pos;
 		sf::Vector2f vel;
-		sf::Vector2f acc;
 
 	public:
 		Player(int num);

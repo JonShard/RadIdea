@@ -18,11 +18,13 @@ Player::Player(int num)
 	playerDead = false;
 	pos = sf::Vector2f(mapWidth/2 , mapHeight/2);
 	vel = sf::Vector2f(0,0);
-	acc = sf::Vector2f(0,0);
 	
 	shipRotation = 0;
 	boost = 0.99f;
 	speed = playerMaxSpeed;
+	activeProjectiles = 0;
+	buttonTimeout = 0;
+
  
 
 	randomPosition(pos);
@@ -83,15 +85,6 @@ Player::Player(int num)
 			explotionSettings.maxRotationSpeed =  0.01f;
 	explotionPtr = new Emitter(pos, explotionSettings);
 
-/*
-	tailPtr = new Emitter(emitterStartPosition, 30, 0.005f, 300, 0.0f,
-						 playerColor[id], sf::Color(255,0,0,200),
-						 0.4f, 0.22f, 0.7, 0.996f, 0.000001f);
-
-	explotionPtr = new Emitter(emitterStartPosition, 900, 0.0001f, 600, 0.23f,
-						 sf::Color(255,100,0), sf::Color(30,30,255),
-						 2.1f, 0.15f, 0.8f, 0.989f, 0.01f);
-*/
 }
 
 
@@ -145,6 +138,12 @@ void Player::update()
 	float leftStickAngle = 0;
 	float rightStickAngle = 0;
 
+
+	if (buttonTimeout > 0)
+	{
+		buttonTimeout -= dt;
+	}
+
 	if (!playerDead)
 	{	
 		leftStickAngle = getAngle(sf::Vector2f(0,0),		//Get input form left stick into euler angles.
@@ -180,6 +179,33 @@ void Player::update()
 			speed += (sf::Joystick::getAxisPosition(id, sf::Joystick::R) + 100)/200 * playerAcc;
 		if(speed > playerMinSpeed)
 			speed -= (sf::Joystick::getAxisPosition(id, sf::Joystick::Z) + 100)/200 * playerAcc;
+
+
+
+		for (int i = 0; i < activeProjectiles; i++)
+		{
+			if (projectiles[i]-> update())
+			{
+				activeProjectiles--;
+				delete projectiles[i];
+				projectiles[i] = NULL;
+			}
+		}
+
+		if (bool pressed = sf::Joystick::isButtonPressed(id, 0) &&
+			boost > PROJECTILECOST &&
+			activeProjectiles < MAXPROJECTILES &&
+			buttonTimeout <= 0)
+		{
+			boost -= PROJECTILECOST;
+			projectiles[activeProjectiles] = new Projectile(pos, vel, id);
+			activeProjectiles++;
+			buttonTimeout = buttonTimeoutTime;
+
+		}
+
+
+
 	}
 
 
@@ -197,8 +223,9 @@ void Player::update()
 
 	body.setRotation(shipRotation);
 	body.setPosition(pos);
-	
+
 	boostIndicator.setRadius(bodyRadius * boost);
+	boostIndicator.setOrigin(sf::Vector2f(bodyRadius * boost, bodyRadius * boost));
 	boostIndicator.setRotation(shipRotation);
 	boostIndicator.setPosition(pos);
 
@@ -230,7 +257,6 @@ void Player::update()
 	tailPtr->changeSettings(tailSettings);
 	}
 
-
 }
 
 
@@ -249,7 +275,11 @@ void Player::draw()
 	{
 		explotionPtr->draw();
 	}
-		
+	
+	for (int i = 0; i < activeProjectiles; i++)
+	{
+		projectiles[i] ->draw();
+	} 
 }
 
 Player::~Player()

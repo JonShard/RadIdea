@@ -40,6 +40,11 @@ const float SHIELDSCALE = 1.4f;
 const float SHIELDOPACITY = 0.8f;
 const int SHIELDCOVERAGE = 60;//Degrees. How wide is the shield.
 
+const int MAXPROJECTILES = 3;
+const float PROJECTILECOST = 0.3f;
+const float PROJECTILESCALE = 2.0f;
+const float PROJECTILESPEED = 1300;
+
 
 //Boids
 
