@@ -1,5 +1,7 @@
 #include "StateMachine.h"
+#include "HelpFunctions.h"
 #include "Constants.h"
+#include <iostream>
 
 extern State state;
 extern sf::RenderWindow window;						//The window that draws the graphics on the screen.
@@ -11,13 +13,34 @@ extern int playerCount;
 
 void StateMachine::updateCollisions()			//Between Player-Player, Player-Projectile, Player-Boids, Boids-Projectile.
 {
+						//Every player will check collision with every other players projectiles:
+	for (int i = 0; i < playerCount; i++) 		//Subject player loop.		
+	{
+		if (players[i]-> isAlive())
+		{
+			for(int j = 0; j < playerCount; j++)	//Object player loop.
+			{
+				if(i != j)							//Subject cant be object of check(no self-check).
+				{
+					for (int p = 0; p < players[j]-> getActiveProjectiles(); p++)							//Object player's projectile loop.
+					{
+						if (checkCollision(players[i]-> getPos(), players[j]-> getProjectilePos(p), bodyRadius, PROJECTILERADIUS))
+						{
+							std::cout << "\nCOLLITION DETECTED! Player" << i << " got hit by Player" << j << "'s projectile.";
+							players[i]-> killPlayer();
+						}
+					}
+				}
+			}
+		}
+	}
 
 }
 
 
 void StateMachine::updateAcceleration()			//Due to gravity wells.
 {
-	
+
 }
 
 
@@ -87,6 +110,10 @@ void StateMachine::updateInGame()
 	{
 		players[i]->update();
 	}
+
+	updateCollisions();
+
+
 
 	for (int i = 0; i < playerCount; i++)							//Draw the players.
 	{

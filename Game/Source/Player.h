@@ -32,9 +32,12 @@ class Player
 	public:
 		Player(int num);
 
+		sf::Vector2f getPos();
+		sf::Vector2f getProjectilePos(int index);
+		int getActiveProjectiles();
 		bool shieldEncounter(sf::Vector2f encPos, bool projectile); //True if player blocks encounter.
+		bool isAlive();
 		void killPlayer();
-
 		void update();
 		void draw();
 

@@ -21,6 +21,7 @@ class Projectile
 	public:
 		Projectile(sf::Vector2f playerPos, sf::Vector2f playerVel, int playerId);
 
+		sf::Vector2f getPos();
 		void splatter();
 		void extinguish();
 

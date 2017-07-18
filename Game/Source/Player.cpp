@@ -88,6 +88,21 @@ Player::Player(int num)
 }
 
 
+sf::Vector2f Player::getPos()
+{	return pos;		}
+
+
+sf::Vector2f Player::getProjectilePos(int index)
+{
+	if(index < activeProjectiles)					//If that projectile exist.
+	{
+		return projectiles[index]-> getPos();
+	}
+}
+
+int Player::getActiveProjectiles()
+{	return activeProjectiles; 	}
+
 
 bool Player::shieldEncounter(sf::Vector2f encPos, bool projectile) //True if player blocks encounter.
 {
@@ -113,6 +128,10 @@ bool Player::shieldEncounter(sf::Vector2f encPos, bool projectile) //True if pla
 
 	return playerBlocksEncounter;
 }
+
+
+bool Player::isAlive()
+{	return !playerDead;		}
 
 
 
@@ -181,17 +200,6 @@ void Player::update()
 			speed -= (sf::Joystick::getAxisPosition(id, sf::Joystick::Z) + 100)/200 * playerAcc;
 
 
-
-		for (int i = 0; i < activeProjectiles; i++)
-		{
-			if (projectiles[i]-> update())
-			{
-				activeProjectiles--;
-				delete projectiles[i];
-				projectiles[i] = NULL;
-			}
-		}
-
 		if (bool pressed = sf::Joystick::isButtonPressed(0, 0) &&
 			boost > PROJECTILECOST &&
 			activeProjectiles < MAXPROJECTILES &&
@@ -209,9 +217,17 @@ void Player::update()
 	}
 
 
+	for (int i = 0; i < activeProjectiles; i++)
+	{
+		if (projectiles[i]-> update())
+		{
+			activeProjectiles--;
+			delete projectiles[i];
+			projectiles[i] = NULL;
+		}
+	}
+
 																				//Update position.
-
-
 
 	if((pos.x > mapWidth && vel.x > 0) || (pos.x < 0 && vel.x < 0))		vel.x *= -1;				//Reflective walls.	
 	if((pos.y > mapHeight && vel.y > 0) || (pos.y < 0 && vel.y < 0))	vel.y *= -1;

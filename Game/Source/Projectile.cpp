@@ -46,6 +46,9 @@ Projectile::Projectile(sf::Vector2f playerPos, sf::Vector2f playerVel, int playe
 }
 
 
+sf::Vector2f Projectile::getPos()
+{ 	return pos;		}
+
 void Projectile::splatter()
 {
 	projectileDead = true;
