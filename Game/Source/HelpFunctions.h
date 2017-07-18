@@ -9,3 +9,4 @@ sf::Vector2f clampVector(sf::Vector2f v, float clamp);
 float getAngle(sf::Vector2f v1, sf::Vector2f v2);										//Retuns the angle between two points.
 float toRadians(float degrees);
 float toDegrees(float radians);
+bool checkCollision(sf::Vector2f v1, sf::Vector2f v2);

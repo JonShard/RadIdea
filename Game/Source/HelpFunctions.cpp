@@ -58,3 +58,20 @@ float toDegrees(float radians)
 {
 	return radians * (180 / 3.14f);
 }
+
+
+bool checkCollision(sf::Vector2f v1, sf::Vector2f v2, float r1, float r2)
+{
+	bool collision = false;
+	float thicc = r1 + r2;
+
+	if (std::abs(v1.x - v2.x) < thicc && std::abs(v1.y - v2.y) < thicc)			//If Positions are 
+	{
+		if (magnitude(v1, v2) < thicc)
+		{
+			collision = true;
+		}
+	}
+
+	return collision;
+}
