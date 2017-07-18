@@ -16,11 +16,13 @@ class Projectile
 		sf::Vector2f vel;
 
 		bool projectileDead;
+		float lifeTime;
 
 	public:
 		Projectile(sf::Vector2f playerPos, sf::Vector2f playerVel, int playerId);
 
 		void splatter();
+		void extinguish();
 
 		bool update();
 		void draw();

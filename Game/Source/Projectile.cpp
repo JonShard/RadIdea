@@ -12,6 +12,7 @@ extern float dt;									//Delta-time.
 Projectile::Projectile(sf::Vector2f playerPos, sf::Vector2f playerVel, int playerId)
 {
 	projectileDead = false;
+	lifeTime = PROJECTILELIFETIME;
 
 	ParticleSettings tailSettings;
 		tailSettings.particleTexture = bowParticleTexture;
@@ -50,6 +51,12 @@ void Projectile::splatter()
 	projectileDead = true;
 }
 
+void Projectile::extinguish()
+{
+	//Wait for tail to run out before killing object.
+	projectileDead = true;
+}
+
 
 bool Projectile::update()
 {
@@ -57,6 +64,10 @@ bool Projectile::update()
 
 	tailPtr-> update(pos, sf::Vector2f(0,0));
 	body.setPosition(pos);
+
+
+	if(lifeTime <= 0) extinguish();
+	lifeTime -= dt;
 
 	return projectileDead;
 }
