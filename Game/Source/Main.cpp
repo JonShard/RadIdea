@@ -3,26 +3,28 @@
 #include "Player.h"			//The controllable player.
 #include "ParticleSystem.h"
 #include "HelpFunctions.h"
-
+#include "StateMachine.h"
 #include "Constants.h"
 
 
 sf::View cam(sf::Vector2f(0,0), sf::Vector2f(mapWidth, mapHeight));
 sf::ContextSettings settings;					//The settings Context, all the config info the window needs to run.
 sf::RenderWindow window;						//The window that draws the graphics on the screen.
-sf::Font font;									//The font imported from file used to print text on Screen.
 sf::Clock deltaTime;
 sf::RectangleShape mapOutline;
+
+sf::Font font;									//The font imported from file used to print text on Screen.
 
 sf::Texture squareParticleTexture;
 sf::Texture circleParticleTexture;
 sf::Texture bowParticleTexture;
 sf::Texture shieldTexture;
 
-
+State state = inGame;								//Set to in-game.
 float dt = 0;
 float buttonTimeout = 0;
-int playerCount = 0;
+
+int playerCount;
 Player* players[maxPlayers];
 
 
@@ -92,63 +94,14 @@ int main ()
 			buttonTimeout -= dt;
 		}
 		
-
-		sf::Event event;
-		while(window.pollEvent(event))									
-		{
-			if(buttonTimeout <= 0)
-			{
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))				// ESC to quit.
-				{
-					window.close();
-					buttonTimeout = buttonTimeoutTime;
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))				// ESC to quit.
-				{
-					if (playerCount < maxPlayers)
-					{
-						players[playerCount] = new Player(playerCount);
-						playerCount++;
-						buttonTimeout = buttonTimeoutTime;
-					}
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))				// ESC to quit.
-				{
-					if (playerCount > 0)
-					{
-						players[playerCount-1] ->killPlayer();
-						buttonTimeout = buttonTimeoutTime;
-					}
-				}
-			}
-			if (event.type == sf::Event::Closed)								//If the event happening is closed:
-			{															//then close the window as well.
-				window.close();
-			}
-
-		}
-
-
-		//////////////		Screen drawing		///////////////
 		window.clear();													//Clears the canvas.
 		window.draw(mapOutline);
 
 
-
-		for (int i = 0; i < playerCount; i++)							//Update all the players.
-		{
-			players[i]->update();
-		}
-
-		for (int i = 0; i < playerCount; i++)							//Draw the players.
-		{
-			players[i]->draw();
-		}
-
-
+		StateMachine::update();
 
 		window.display();												//Sends the buffer to the display.
-		//////////////		Screen drawn		///////////////
+		
 	} 
 
 	std::cout << "\n\n";				
