@@ -65,6 +65,7 @@ class Emitter
 
 		void changeSettings(ParticleSettings newSettings);
 		void shootParticle(sf::Vector2f grandParrentVel);
+		
 		bool update(sf::Vector2f parrentPos, sf::Vector2f parrentVel); 
 		void draw();
 };

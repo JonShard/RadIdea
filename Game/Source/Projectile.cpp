@@ -54,28 +54,45 @@ void Projectile::splatter()
 void Projectile::extinguish()
 {
 	//Wait for tail to run out before killing object.
+
+	ParticleSettings tailSettings;
+		tailSettings.particleTexture = bowParticleTexture;
+		tailSettings.launchSpeed = 0;
+		tailSettings.emitterCooldown = 1;
+		tailSettings.maxParticles = 0;
+		tailSettings.emitterLifeTime = 0.0f;
+
+		tailSettings.startColor = sf::Color(255,255,0,200);
+		tailSettings.endColor = sf::Color(0,100,0,100);
+		tailSettings.startScale = 1.2f;
+		tailSettings.endScale = 0.0f;
+		tailSettings.particleLifeTime = 1.0f;
+		tailSettings.airResistance = 0.996f;
+		tailSettings.maxRotationSpeed = 0.000001f;
+	tailPtr-> changeSettings(tailSettings);
 	projectileDead = true;
 }
 
 
 bool Projectile::update()
 {
+	bool particlesAlive = true;
 	pos += vel * dt;
 
-	tailPtr-> update(pos, sf::Vector2f(0,0));
+	particlesAlive = tailPtr-> update(pos, sf::Vector2f(0,0));
 	body.setPosition(pos);
 
 
 	if(lifeTime <= 0) extinguish();
 	lifeTime -= dt;
 
-	return projectileDead;
+	return (projectileDead && !particlesAlive);
 }
 
 
 void Projectile::draw()
 {
-	window.draw(body);
+	if (!projectileDead) window.draw(body);
 	tailPtr->draw();
 }
 

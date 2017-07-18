@@ -17,8 +17,8 @@ const float buttonTimeoutTime = 0.15f;
 
 
 //Map
-const int mapHeight = 6000;
-const int mapWidth = 6000;
+const int mapHeight = 4500;
+const int mapWidth = 4500;
 
 
 //Player
@@ -44,7 +44,7 @@ const int MAXPROJECTILES = 3;
 const float PROJECTILECOST = 0.3f;
 const float PROJECTILESCALE = 2.0f;
 const float PROJECTILESPEED = 1300;
-const float PROJECTILELIFETIME = 1;
+const float PROJECTILELIFETIME = 2;
 
 
 //Boids

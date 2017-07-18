@@ -192,7 +192,7 @@ void Player::update()
 			}
 		}
 
-		if (bool pressed = sf::Joystick::isButtonPressed(id, 0) &&
+		if (bool pressed = sf::Joystick::isButtonPressed(0, 0) &&
 			boost > PROJECTILECOST &&
 			activeProjectiles < MAXPROJECTILES &&
 			buttonTimeout <= 0)
