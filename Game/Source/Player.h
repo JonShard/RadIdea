@@ -38,6 +38,7 @@ class Player
 		bool shieldEncounter(sf::Vector2f encPos, bool projectile); //True if player blocks encounter.
 		bool isAlive();
 		void killPlayer();
+		void splatterProjectile(int index);						//When blocked by other players shield.
 		void update();
 		void draw();
 

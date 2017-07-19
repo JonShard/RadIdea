@@ -1,6 +1,7 @@
 #include "Projectile.h"
 #include "HelpFunctions.h"
 #include <cmath>
+#include <iostream>
 
 
 extern sf::Texture bowParticleTexture;
@@ -47,17 +48,33 @@ Projectile::Projectile(sf::Vector2f playerPos, sf::Vector2f playerVel, int playe
 
 
 sf::Vector2f Projectile::getPos()
-{ 	return pos;		}
+{ 	
+	return (projectileDead)? sf::Vector2f(0,0) : pos;		
+}
 
 void Projectile::splatter()
 {
+	ParticleSettings tailSettings;
+		tailSettings.particleTexture = circleParticleTexture;
+		tailSettings.launchSpeed = 400;
+		tailSettings.emitterCooldown = 0.00001f;
+		tailSettings.maxParticles = 300;
+		tailSettings.emitterLifeTime = 0.8f;	//Crashes if this is more than 0; Memory access violation.
+
+		tailSettings.startColor = sf::Color(255,255,0,200);
+		tailSettings.endColor = sf::Color(0,100,0,10);
+		tailSettings.startScale = 3.2f;
+		tailSettings.endScale = 0.2f;
+		tailSettings.particleLifeTime = 1.4f;
+		tailSettings.airResistance = 0.996f;
+		tailSettings.maxRotationSpeed = 0.000001f;
+	tailPtr-> changeSettings(tailSettings);
+
 	projectileDead = true;
 }
 
 void Projectile::extinguish()
 {
-	//Wait for tail to run out before killing object.
-
 	ParticleSettings tailSettings;
 		tailSettings.particleTexture = bowParticleTexture;
 		tailSettings.launchSpeed = 0;
@@ -81,15 +98,26 @@ bool Projectile::update()
 {
 	bool particlesAlive = true;
 	pos += vel * dt;
+	std::cout << "\nPos:" << pos.x << ", " << pos.y;
+	
+	if (projectileDead) particlesAlive = tailPtr-> update(pos, vel * -1.3f);
+	else 				particlesAlive = tailPtr-> update(pos, sf::Vector2f(0,0));
 
-	particlesAlive = tailPtr-> update(pos, sf::Vector2f(0,0));
 	body.setPosition(pos);
 
 
-	if(lifeTime <= 0) extinguish();
+	if(lifeTime <= 0) 
+	{
+		extinguish();
+	}
+	if(lifeTime <= -1.4f) 
+	{
+		particlesAlive = false;
+	}
 	lifeTime -= dt;
 
-	return (projectileDead && !particlesAlive);
+
+	return !particlesAlive;
 }
 
 

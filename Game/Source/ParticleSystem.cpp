@@ -163,7 +163,7 @@ bool Emitter::update(sf::Vector2f parrentPos, sf::Vector2f parrentVel)
 
 	for (int i = 0; i < particleCount; i++)		//Go through particles, if any should be dead, kill em.
 	{
-		if (particles[i]->update() < 0) 
+		if (particles[i]->update() < 0)
 		{
 			delete particles[particleCount-1];
 			particleCount--;

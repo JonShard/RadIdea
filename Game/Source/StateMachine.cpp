@@ -23,7 +23,14 @@ void StateMachine::updateCollisions()			//Between Player-Player, Player-Projecti
 				if(i != j)							//Subject cant be object of check(no self-check).
 				{
 					for (int p = 0; p < players[j]-> getActiveProjectiles(); p++)							//Object player's projectile loop.
-					{
+					{	
+						// Projectile-Shield collision:
+						if (checkCollision(players[i]-> getPos(), players[j]-> getProjectilePos(p), SHIELDRADIUS, PROJECTILERADIUS))
+						{
+							players[j]-> splatterProjectile(p);
+						}
+
+						// Projectile-Player collision:
 						if (checkCollision(players[i]-> getPos(), players[j]-> getProjectilePos(p), bodyRadius, PROJECTILERADIUS))
 						{
 							std::cout << "\nCOLLITION DETECTED! Player" << i << " got hit by Player" << j << "'s projectile.";
@@ -105,14 +112,12 @@ void StateMachine::updateInGame()
 
 	}
 
+	updateCollisions();
 
 	for (int i = 0; i < playerCount; i++)							//Update all the players.
 	{
 		players[i]->update();
 	}
-
-	updateCollisions();
-
 
 
 	for (int i = 0; i < playerCount; i++)							//Draw the players.

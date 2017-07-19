@@ -94,10 +94,12 @@ sf::Vector2f Player::getPos()
 
 sf::Vector2f Player::getProjectilePos(int index)
 {
-	if(index < activeProjectiles)					//If that projectile exist.
+	if(index < activeProjectiles && projectiles[index] != NULL)					//If that projectile exist.
 	{
 		return projectiles[index]-> getPos();
 	}
+
+	return sf::Vector2f(0,0);
 }
 
 int Player::getActiveProjectiles()
@@ -149,6 +151,12 @@ void Player::killPlayer()
 
 }
 
+
+
+void Player::splatterProjectile(int index)
+{
+	projectiles[index]-> splatter();
+}
 
 
 
@@ -206,24 +214,31 @@ void Player::update()
 			buttonTimeout <= 0)
 		{
 			boost -= PROJECTILECOST;
-			projectiles[activeProjectiles] = new Projectile(pos, vel, id);
 			activeProjectiles++;
+
+			for (int i = activeProjectiles; i > 0; i--)
+	    	{
+	        	projectiles[i] = projectiles[i - 1];       //Shift all the projectiles one step further to make space for new projecticle.
+	    	}
+
+			projectiles[0] = new Projectile(pos, vel, id);
 			buttonTimeout = buttonTimeoutTime;
 
 		}
 
-
-
 	}
 
 
-	for (int i = 0; i < activeProjectiles; i++)
+
+	for (int i = activeProjectiles -1; i >= 0; i--)								//Update 
 	{
 		if (projectiles[i]-> update())
 		{
+			std::cout << "\nDeleting player" << id << "'s projectile no " << activeProjectiles;
+
 			activeProjectiles--;
-			delete projectiles[i];
-			projectiles[i] = NULL;
+			delete projectiles[activeProjectiles];
+			projectiles[activeProjectiles] = NULL;
 		}
 	}
 
@@ -294,7 +309,10 @@ void Player::draw()
 	
 	for (int i = 0; i < activeProjectiles; i++)
 	{
-		projectiles[i] ->draw();
+		if (projectiles[i] != NULL)
+		{
+			projectiles[i] ->draw();
+		}
 	} 
 }
 
