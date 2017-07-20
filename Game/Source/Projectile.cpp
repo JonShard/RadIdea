@@ -98,7 +98,6 @@ bool Projectile::update()
 {
 	bool particlesAlive = true;
 	pos += vel * dt;
-	std::cout << "\nPos:" << pos.x << ", " << pos.y;
 	
 	if (projectileDead) particlesAlive = tailPtr-> update(pos, vel * -1.3f);
 	else 				particlesAlive = tailPtr-> update(pos, sf::Vector2f(0,0));
@@ -106,7 +105,7 @@ bool Projectile::update()
 	body.setPosition(pos);
 
 
-	if(lifeTime <= 0) 
+	if(lifeTime <= 0)
 	{
 		extinguish();
 	}

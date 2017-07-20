@@ -11,8 +11,8 @@ int randomNumber(int min, int max)												//Random int in a range.
 
 void randomPosition(sf::Vector2f & pos)
 {
-	pos.x = static_cast<float>(rand() % windowWidth);
-	pos.y = static_cast<float>(rand() % windowHeight);
+	pos.x = static_cast<float>(rand() % mapWidth);
+	pos.y = static_cast<float>(rand() % mapHeight);
 }
 
 sf::Vector2f clampVector(sf::Vector2f v, float clamp)

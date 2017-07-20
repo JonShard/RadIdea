@@ -21,7 +21,7 @@ Player::Player(int num)
 	
 	shipRotation = 0;
 	boost = 0.99f;
-	speed = playerMaxSpeed;
+	speed = playerMinSpeed;
 	activeProjectiles = 0;
 	buttonTimeout = 0;
 
@@ -260,7 +260,7 @@ void Player::update()
 	boostIndicator.setRotation(shipRotation);
 	boostIndicator.setPosition(pos);
 
-	shield.setRotation(rightStickAngle);
+	shield.setRotation(rightStickAngle + 180);
 	shield.setPosition(pos);
 
 	tailPtr->update(pos, sf::Vector2f(0,0));

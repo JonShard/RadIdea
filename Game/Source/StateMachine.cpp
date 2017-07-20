@@ -27,7 +27,10 @@ void StateMachine::updateCollisions()			//Between Player-Player, Player-Projecti
 						// Projectile-Shield collision:
 						if (checkCollision(players[i]-> getPos(), players[j]-> getProjectilePos(p), SHIELDRADIUS, PROJECTILERADIUS))
 						{
-							players[j]-> splatterProjectile(p);
+							if (players[i]-> shieldEncounter(players[j]-> getProjectilePos(p), true))
+							{
+								players[j]-> splatterProjectile(p);
+							}
 						}
 
 						// Projectile-Player collision:
