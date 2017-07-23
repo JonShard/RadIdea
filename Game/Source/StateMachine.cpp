@@ -18,9 +18,9 @@ void StateMachine::updateCollisions()			//Between Player-Player, Player-Projecti
 	{
 		if (players[i]-> isAlive())
 		{
-			for(int j = 0; j < playerCount; j++)	//Object player loop.
+			for (int j = 0; j < playerCount; j++)	//Object player loop.
 			{
-				if(i != j)							//Subject cant be object of check(no self-check).
+				if (i != j)							//Subject cant be object of check(no self-check).
 				{
 					for (int p = 0; p < players[j]-> getActiveProjectiles(); p++)							//Object player's projectile loop.
 					{	
@@ -40,6 +40,17 @@ void StateMachine::updateCollisions()			//Between Player-Player, Player-Projecti
 							players[i]-> killPlayer();
 						}
 					}
+				
+
+
+					//Player-Shields:		//If attacking player is alive, and is using white shield, and defending player is not blocking.
+					if (checkCollision(players[i]-> getPos(), players[j]-> getPos(), bodyRadius, SHIELDRADIUS) && players[j]-> isAlive())
+					{
+						if (players[j]-> shieldEncounter(players[i]-> getPos(), false) && !players[i]-> shieldEncounter(players[j]-> getPos(), false))
+							players[i]-> killPlayer();
+					}
+
+
 				}
 			}
 		}

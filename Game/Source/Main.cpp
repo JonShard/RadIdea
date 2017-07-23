@@ -11,13 +11,17 @@ sf::View cam(sf::Vector2f(0,0), sf::Vector2f(mapWidth, mapHeight));
 sf::ContextSettings settings;					//The settings Context, all the config info the window needs to run.
 sf::RenderWindow window;						//The window that draws the graphics on the screen.
 sf::Clock deltaTime;
-sf::RectangleShape mapOutline;
+sf::CircleShape mapOutline;
+Emitter* backgroundParticlesPtr;
+Emitter* backgroundSmokePtr;
+
+
 
 sf::Font font;									//The font imported from file used to print text on Screen.
-
 sf::Texture squareParticleTexture;
 sf::Texture circleParticleTexture;
 sf::Texture bowParticleTexture;
+sf::Texture smokeParticleTexture;
 sf::Texture shieldTexture;
 
 State state = inGame;								//Set to in-game.
@@ -38,9 +42,11 @@ int main ()
 	window.setView(cam);
 	window.setFramerateLimit(60);
 
-	mapOutline.setSize(sf::Vector2f(mapWidth, mapHeight));
-	mapOutline.setFillColor(sf::Color::Black);
-	mapOutline.setOutlineThickness(5);
+	mapOutline.setRadius(mapWidth / 2);
+	mapOutline.setFillColor(sf::Color(0,0,0,0));
+	mapOutline.setOutlineColor(sf::Color::White);
+	mapOutline.setOutlineThickness(6);
+
 
 	if(font.loadFromFile("../OtherAssets/FONT.ttf"))					//Loads font from file. Gives error in console if
 	{
@@ -62,12 +68,17 @@ int main ()
 		std::cout << "\nLoaded bowParticle.png";
 	}
 
+	if(smokeParticleTexture.loadFromFile("../Textures/smokeParticle.png"))					//Loads font from file. Gives error in console if
+	{
+		std::cout << "\nLoaded smokeParticle.png";
+	}
+
 	if(shieldTexture.loadFromFile("../Textures/shield.png"))					//Loads font from file. Gives error in console if
 	{
 		std::cout << "\nLoaded shield.png";
 	}
 
-	cam.zoom(1.01f);													//Zomed out.
+	cam.zoom(0.6f);													//Zomed out.
 	//cam.zoom(0.2f);													//Zoomed in close.
 
 	window.setView(cam);			
@@ -82,6 +93,44 @@ int main ()
 	}
 */	
 
+	players[playerCount] = new Player(playerCount);
+	playerCount++;
+	{
+	ParticleSettings backgroundSettings;
+		backgroundSettings.particleTexture = squareParticleTexture;
+		backgroundSettings.launchSpeed = 20;
+		backgroundSettings.emitterCooldown = 0.01f;
+		backgroundSettings.maxParticles = 300;
+		backgroundSettings.emitterLifeTime = 0.0f;
+		backgroundSettings.emissionArea = sf::Vector2f(mapWidth, mapHeight);
+
+		backgroundSettings.startColor = sf::Color(40,60,200,100);
+		backgroundSettings.endColor = sf::Color(255,135,255,245);
+		backgroundSettings.startScale = 0.7f;
+		backgroundSettings.endScale = 0.0f;
+		backgroundSettings.particleLifeTime = 6.0f;
+		backgroundSettings.airResistance = 1;
+		backgroundSettings.maxRotationSpeed =  0.000001f;	
+	backgroundParticlesPtr = new Emitter(sf::Vector2f(mapWidth/2, mapHeight/2), backgroundSettings);
+	}
+	{
+	ParticleSettings backgroundSettings;
+		backgroundSettings.particleTexture = smokeParticleTexture;
+		backgroundSettings.launchSpeed = 35;
+		backgroundSettings.emitterCooldown = 0.015f;
+		backgroundSettings.maxParticles = 400;
+		backgroundSettings.emitterLifeTime = 0.0f;
+		backgroundSettings.emissionArea = sf::Vector2f(mapWidth, mapHeight);
+
+		backgroundSettings.startColor = sf::Color(40,60,200,80);
+		backgroundSettings.endColor = sf::Color(255,135,255,0);
+		backgroundSettings.startScale = 0.0f;
+		backgroundSettings.endScale = 30.0f;
+		backgroundSettings.particleLifeTime = 7.0f;
+		backgroundSettings.airResistance = 1;
+		backgroundSettings.maxRotationSpeed =  0.01f;	
+	backgroundSmokePtr = new Emitter(sf::Vector2f(mapWidth/2, mapHeight/2), backgroundSettings);
+	}
 
 
 	//update()
@@ -97,12 +146,25 @@ int main ()
 		window.clear();													//Clears the canvas.
 		window.draw(mapOutline);
 
+		backgroundSmokePtr-> update(sf::Vector2f(mapWidth/2, mapHeight/2), sf::Vector2f(0, 0));
+		backgroundParticlesPtr-> update(sf::Vector2f(mapWidth/2, mapHeight/2), sf::Vector2f(0, 0));
+
+		cam.setCenter(players[0]-> getPos());
+		window.setView(cam);			
+
+
+		backgroundSmokePtr-> draw();
+		backgroundParticlesPtr-> draw();
+
 
 		StateMachine::update();
+
 
 		window.display();												//Sends the buffer to the display.
 		
 	} 
+
+	delete backgroundParticlesPtr;
 
 	std::cout << "\n\n";				
 	return 0;

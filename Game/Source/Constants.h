@@ -3,8 +3,8 @@
 #include <SFML/Graphics.hpp>		//for Graphics stuff
 
 //Window
-const int windowHeight = 800;
-const int windowWidth = 800;
+const int windowHeight = 1080;
+const int windowWidth = 1080;
 
 enum State
 {
@@ -17,15 +17,15 @@ const float buttonTimeoutTime = 0.15f;
 
 
 //Map
-const int mapHeight = 4500;
-const int mapWidth = 4500;
+const int mapHeight = 7600;
+const int mapWidth = 7600;
 
 
 //Player
 const float bodyRadius = 34;
 const float boostIndicatorRadius = 26;
-const float playerMaxSpeed = 1300;
-const float playerMinSpeed = 40;	//600
+const float playerMaxSpeed = 1500;
+const float playerMinSpeed = 6;	//600
 const float playerAcc = 25;
 const float playerDeAcc = 0.98f;
 const float playerTurnSpeed = 35;

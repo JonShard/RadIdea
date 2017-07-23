@@ -21,7 +21,7 @@ Player::Player(int num)
 	
 	shipRotation = 0;
 	boost = 0.99f;
-	speed = playerMinSpeed;
+	speed = playerMaxSpeed;
 	activeProjectiles = 0;
 	buttonTimeout = 0;
 
@@ -59,6 +59,7 @@ Player::Player(int num)
 		tailSettings.emitterCooldown = 0.005f;
 		tailSettings.maxParticles = 300;
 		tailSettings.emitterLifeTime = 0.0f;
+		tailSettings.emissionArea = sf::Vector2f(30, 30);
 
 		tailSettings.startColor = playerColor[id];
 		tailSettings.endColor = sf::Color(255,0,0,200);
@@ -75,6 +76,8 @@ Player::Player(int num)
 			explotionSettings.emitterCooldown = 0.001f;
 			explotionSettings.maxParticles = 600;
 			explotionSettings.emitterLifeTime = 0.58f;
+			explotionSettings.emissionArea = sf::Vector2f(60, 60);
+
 
 			explotionSettings.startColor = sf::Color(255,100,0);
 			explotionSettings.endColor = sf::Color(30,30,255, 0);
@@ -202,10 +205,14 @@ void Player::update()
 		}
 
 
-		if(speed < playerMaxSpeed)																		//Accelerate with game-pad triggers.
-			speed += (sf::Joystick::getAxisPosition(id, sf::Joystick::R) + 100)/200 * playerAcc;
-		if(speed > playerMinSpeed)
+
+		if (speed < playerMaxSpeed)												//Accelerate with game-pad triggers.
+			speed += (sf::Joystick::getAxisPosition(id, sf::Joystick::R) + 100)/200 * playerAcc;	//Bumpers to controll speed.
+		
+
+		if (speed > playerMinSpeed)
 			speed -= (sf::Joystick::getAxisPosition(id, sf::Joystick::Z) + 100)/200 * playerAcc;
+
 
 
 		if (bool pressed = sf::Joystick::isButtonPressed(0, 0) &&
@@ -244,8 +251,7 @@ void Player::update()
 
 																				//Update position.
 
-	if((pos.x > mapWidth && vel.x > 0) || (pos.x < 0 && vel.x < 0))		vel.x *= -1;				//Reflective walls.	
-	if((pos.y > mapHeight && vel.y > 0) || (pos.y < 0 && vel.y < 0))	vel.y *= -1;
+	if(magnitude(sf::Vector2f(mapWidth/2, mapHeight/2), pos) > mapWidth/2)	vel *= -1.0f;				//Reflective walls.	
 
 	if (!playerDead)vel = clampVector(vel, speed);
 	vel *= playerDeAcc;																//Limit speed.
@@ -277,6 +283,7 @@ void Player::update()
 		tailSettings.emitterCooldown = 0.015f;
 		tailSettings.maxParticles = 400;
 		tailSettings.emitterLifeTime = 0.0f;
+		tailSettings.emissionArea = sf::Vector2f(30, 30);
 
 		tailSettings.startColor = sf::Color(255,100,0);
 		tailSettings.endColor = sf::Color(30,30,255, 0);

@@ -89,6 +89,7 @@ Emitter::Emitter()
 	settings.emitterCooldown = 	EMITTERCOOLDOWN;
 	settings.maxParticles = 	MAXPARTICLES;
 	settings.emitterLifeTime = 	EMITTERLIFETIME;
+	settings.emissionArea = 	sf::Vector2f(PARTICLEPOSOFFSET, PARTICLEPOSOFFSET);
 	settings.startColor = 		STARTCOLOR;
 	settings.endColor = 		ENDCOLOR;
 	settings.startScale = 		STARTSCALE;
@@ -96,7 +97,6 @@ Emitter::Emitter()
 	settings.airResistance = 	AIRRESISTANCE;
 	settings.particleLifeTime = STARTLIFETIME;
 	settings.maxRotationSpeed = MAXROTATIONSPEED;
-
 
 	cooldown = settings.emitterCooldown;
 	particleCount = 0;
@@ -149,8 +149,8 @@ void Emitter::shootParticle(sf::Vector2f grandParrentVel)
 
 	    sf::Vector2f shootPos = pos;
 
-	    shootPos.x += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
-	    shootPos.y += (randomNumber(0, PARTICLEPOSOFFSET) - PARTICLEPOSOFFSET/2);
+	    shootPos.x += randomNumber(0, 2 * settings.emissionArea.x) - settings.emissionArea.x;
+	    shootPos.y += randomNumber(0, 2 * settings.emissionArea.y) - settings.emissionArea.y;
 
 	    particles[0] = new Particle(shootPos, shootVel, settings);
     }
@@ -185,12 +185,10 @@ bool Emitter::update(sf::Vector2f parrentPos, sf::Vector2f parrentVel)
 	    		else break;	
     		}
     		
-    		
   	  	}
 	}
 
     cooldown -= particleCooldownTimer.restart().asSeconds();
-
 
 	pos = parrentPos;
 

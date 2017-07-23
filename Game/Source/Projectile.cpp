@@ -21,6 +21,7 @@ Projectile::Projectile(sf::Vector2f playerPos, sf::Vector2f playerVel, int playe
 		tailSettings.emitterCooldown = 0.01f;
 		tailSettings.maxParticles = 300;
 		tailSettings.emitterLifeTime = 0.0f;
+		tailSettings.emissionArea = sf::Vector2f(10, 10);
 
 		tailSettings.startColor = sf::Color(255,255,0,200);
 		tailSettings.endColor = sf::Color(0,100,0,100);
@@ -60,6 +61,7 @@ void Projectile::splatter()
 		tailSettings.emitterCooldown = 0.00001f;
 		tailSettings.maxParticles = 300;
 		tailSettings.emitterLifeTime = 0.8f;	//Crashes if this is more than 0; Memory access violation.
+		tailSettings.emissionArea = sf::Vector2f(10, 10);
 
 		tailSettings.startColor = sf::Color(255,255,0,200);
 		tailSettings.endColor = sf::Color(0,100,0,10);
@@ -81,6 +83,8 @@ void Projectile::extinguish()
 		tailSettings.emitterCooldown = 1;
 		tailSettings.maxParticles = 0;
 		tailSettings.emitterLifeTime = 0.0f;
+		tailSettings.emissionArea = sf::Vector2f(10, 10);
+
 
 		tailSettings.startColor = sf::Color(255,255,0,200);
 		tailSettings.endColor = sf::Color(0,100,0,100);

@@ -10,6 +10,7 @@ struct ParticleSettings
 		float emitterCooldown;
 		float maxParticles;
 		float emitterLifeTime;
+		sf::Vector2f emissionArea;
 
 							//Particle values
 		sf::Texture particleTexture;
