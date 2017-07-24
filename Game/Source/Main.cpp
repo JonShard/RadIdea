@@ -23,6 +23,8 @@ sf::Texture circleParticleTexture;
 sf::Texture bowParticleTexture;
 sf::Texture smokeParticleTexture;
 sf::Texture shieldTexture;
+sf::Texture mineTexture;
+
 
 State state = inGame;								//Set to in-game.
 float dt = 0;
@@ -76,6 +78,11 @@ int main ()
 	if(shieldTexture.loadFromFile("../Textures/shield.png"))					//Loads font from file. Gives error in console if
 	{
 		std::cout << "\nLoaded shield.png";
+	}
+
+	if(mineTexture.loadFromFile("../Textures/mine.png"))					//Loads font from file. Gives error in console if
+	{
+		std::cout << "\nLoaded mine.png";
 	}
 
 	cam.zoom(0.6f);													//Zomed out.
@@ -144,27 +151,27 @@ int main ()
 		}
 		
 		window.clear();													//Clears the canvas.
-		window.draw(mapOutline);
 
 		backgroundSmokePtr-> update(sf::Vector2f(mapWidth/2, mapHeight/2), sf::Vector2f(0, 0));
-		backgroundParticlesPtr-> update(sf::Vector2f(mapWidth/2, mapHeight/2), sf::Vector2f(0, 0));
-
-		cam.setCenter(players[0]-> getPos());
-		window.setView(cam);			
+		backgroundParticlesPtr-> update(sf::Vector2f(mapWidth/2, mapHeight/2), sf::Vector2f(0, 0));			
 
 
 		backgroundSmokePtr-> draw();
 		backgroundParticlesPtr-> draw();
 
 
+		cam.setCenter(players[0]-> getPos());
+		window.setView(cam);
 		StateMachine::update();
 
-
+		window.draw(mapOutline);
 		window.display();												//Sends the buffer to the display.
 		
 	} 
 
 	delete backgroundParticlesPtr;
+	delete backgroundSmokePtr;
+
 
 	std::cout << "\n\n";				
 	return 0;

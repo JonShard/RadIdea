@@ -23,6 +23,7 @@ Player::Player(int num)
 	boost = 0.99f;
 	speed = playerMaxSpeed;
 	activeProjectiles = 0;
+	activeMines = 0;
 	buttonTimeout = 0;
 
  
@@ -93,6 +94,7 @@ Player::Player(int num)
 
 sf::Vector2f Player::getPos()
 {	return pos;		}
+
 
 
 sf::Vector2f Player::getProjectilePos(int index)
@@ -233,6 +235,28 @@ void Player::update()
 
 		}
 
+
+		if (bool pressed = sf::Joystick::isButtonPressed(0, 1) &&
+			boost > MINECOST &&
+			activeMines < MAXMINES &&
+			buttonTimeout <= 0)
+		{
+			boost -= MINECOST;
+			activeMines++;
+
+			for (int i = activeMines; i > 0; i--)
+	    	{
+	        	mines[i] = mines[i - 1];       //Shift all the mines one step further to make space for new mine.
+	    	}
+
+			mines[0] = new Mine(pos, vel, id);
+			buttonTimeout = buttonTimeoutTime;
+
+		}
+
+
+
+
 	}
 
 
@@ -246,6 +270,18 @@ void Player::update()
 			activeProjectiles--;
 			delete projectiles[activeProjectiles];
 			projectiles[activeProjectiles] = NULL;
+		}
+	}
+
+	for (int i = activeMines -1; i >= 0; i--)								//Update 
+	{
+		if (mines[i]-> update())
+		{
+			std::cout << "\nDeleting player" << id << "'s mine no " << activeMines;
+
+			activeMines--;
+			delete mines[activeMines];
+			mines[activeMines] = NULL;
 		}
 	}
 
@@ -319,6 +355,13 @@ void Player::draw()
 		if (projectiles[i] != NULL)
 		{
 			projectiles[i] ->draw();
+		}
+	} 
+	for (int i = 0; i < activeMines; i++)
+	{
+		if (mines[i] != NULL)
+		{
+			mines[i] ->draw();
 		}
 	} 
 }

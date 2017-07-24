@@ -126,8 +126,8 @@ bool Projectile::update()
 
 void Projectile::draw()
 {
-	if (!projectileDead) window.draw(body);
 	tailPtr->draw();
+	if (!projectileDead) window.draw(body);
 }
 
 

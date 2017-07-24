@@ -48,6 +48,14 @@ const float PROJECTILESPEED = 1300;
 const float PROJECTILELIFETIME = 2;
 const float PROJECTILERADIUS = 50;		//Used to check collision. Not set sprite size.
 
+const int MAXMINES = 20;
+const float MINECOST = 0.0f;
+const float MINEROTATION = 0.01f;
+const float MINEDEACC = 0.97f;			
+const float MINELIFETIME = 8;
+const float MINESCALE = 1;
+const float MINERADIUS = 200;
+
 
 //Boids
 

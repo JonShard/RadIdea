@@ -2,6 +2,7 @@
 
 #include "ParticleSystem.h"
 #include "Projectile.h"
+#include "Mine.h"
 #include <SFML/Graphics.hpp>		//for Graphics stuff
 
 
@@ -15,6 +16,7 @@ class Player
 		sf::Sprite shield;
 
 		Projectile* projectiles[MAXPROJECTILES];
+		Mine* mines[MAXMINES];
 
 		int id;
 		bool playerDead;
@@ -23,6 +25,7 @@ class Player
 		float shipRotation;
 		float shieldRotation;
 		int activeProjectiles;
+		int activeMines;
 		float buttonTimeout;
 
 
