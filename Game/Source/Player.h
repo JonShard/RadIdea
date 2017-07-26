@@ -37,11 +37,14 @@ class Player
 
 		sf::Vector2f getPos();
 		sf::Vector2f getProjectilePos(int index);
+		sf::Vector2f getMinePos(int index);
 		int getActiveProjectiles();
+		int getActiveMines();
 		bool shieldEncounter(sf::Vector2f encPos, bool projectile); //True if player blocks encounter.
 		bool isAlive();
 		void killPlayer();
 		void splatterProjectile(int index);						//When blocked by other players shield.
+		void explodeMine(int index);						//When blocked by other players shield.
 		void update();
 		void draw();
 

@@ -43,12 +43,29 @@ void StateMachine::updateCollisions()			//Between Player-Player, Player-Projecti
 				
 
 
+					for (int p = 0; p < players[j]-> getActiveMines(); p++)							//Object player's projectile loop.
+					{	
+
+						// Mine-Player collision:
+						if (checkCollision(players[i]-> getPos(), players[j]-> getMinePos(p), bodyRadius, MINERADIUS))
+						{
+							std::cout << "\nCOLLITION DETECTED! Player" << i << " got hit by Player" << j << "'s mine.";
+							//players[i]-> killPlayer();
+							players[j]-> explodeMine(p);
+						}
+					}
+
+
+
 					//Player-Shields:		//If attacking player is alive, and is using white shield, and defending player is not blocking.
 					if (checkCollision(players[i]-> getPos(), players[j]-> getPos(), bodyRadius, SHIELDRADIUS) && players[j]-> isAlive())
 					{
 						if (players[j]-> shieldEncounter(players[i]-> getPos(), false) && !players[i]-> shieldEncounter(players[j]-> getPos(), false))
 							players[i]-> killPlayer();
 					}
+
+
+
 
 
 				}

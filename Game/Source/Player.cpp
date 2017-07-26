@@ -56,20 +56,22 @@ Player::Player(int num)
 
 	ParticleSettings tailSettings;
 		tailSettings.particleTexture = squareParticleTexture;
-		tailSettings.launchSpeed = 30;
-		tailSettings.emitterCooldown = 0.005f;
+		tailSettings.launchSpeed = 55;
+		tailSettings.emitterCooldown = 0.004f;
 		tailSettings.maxParticles = 300;
 		tailSettings.emitterLifeTime = 0.0f;
-		tailSettings.emissionArea = sf::Vector2f(30, 30);
+		tailSettings.emissionArea = sf::Vector2f(10, 10);
 
 		tailSettings.startColor = playerColor[id];
-		tailSettings.endColor = sf::Color(255,0,0,200);
-		tailSettings.startScale = 0.4f;
-		tailSettings.endScale = 0.0f;
-		tailSettings.particleLifeTime = 0.7f;
-		tailSettings.airResistance = 0.996f;
+		tailSettings.endColor = sf::Color(255,0,0,0);
+		tailSettings.startScale = 0.6f;
+		tailSettings.endScale = 0.3f;
+		tailSettings.particleLifeTime = 0.8f;
+		tailSettings.airResistance = 1;
 		tailSettings.maxRotationSpeed =  0.000001f;
 	tailPtr = new Emitter(pos, tailSettings);
+
+
 
 	ParticleSettings explotionSettings;
 			explotionSettings.particleTexture = circleParticleTexture;
@@ -77,7 +79,7 @@ Player::Player(int num)
 			explotionSettings.emitterCooldown = 0.001f;
 			explotionSettings.maxParticles = 600;
 			explotionSettings.emitterLifeTime = 0.58f;
-			explotionSettings.emissionArea = sf::Vector2f(60, 60);
+			explotionSettings.emissionArea = sf::Vector2f(5, 5);
 
 
 			explotionSettings.startColor = sf::Color(255,100,0);
@@ -107,8 +109,23 @@ sf::Vector2f Player::getProjectilePos(int index)
 	return sf::Vector2f(0,0);
 }
 
+
+sf::Vector2f Player::getMinePos(int index)
+{
+	if(index < activeMines && mines[index] != NULL)					//If that projectile exist.
+	{
+		return mines[index]-> getPos();
+	}
+
+	return sf::Vector2f(0,0);
+}
+
 int Player::getActiveProjectiles()
 {	return activeProjectiles; 	}
+
+
+int Player::getActiveMines()
+{	return activeMines; 	}
 
 
 bool Player::shieldEncounter(sf::Vector2f encPos, bool projectile) //True if player blocks encounter.
@@ -164,6 +181,12 @@ void Player::splatterProjectile(int index)
 }
 
 
+void Player::explodeMine(int index)
+{
+	mines[index]-> explode();
+}
+
+
 
 void Player::update()
 {			
@@ -190,21 +213,27 @@ void Player::update()
 		shieldRotation = rightStickAngle;
 
 
+
+		sf::Vector2f velAdjustment = sf::Vector2f(0,0);
+
 		if (std::abs(leftStickAngle - shipRotation) < 180)			//Steers the player left or right depending on current cource:
 		{
 			if (leftStickAngle < shipRotation)
-				vel += sf::Vector2f(std::cos(toRadians(shipRotation + 180)) * playerTurnSpeed, std::sin(toRadians(shipRotation + 180)) * playerTurnSpeed);			//Turn clockwise.
+				velAdjustment = sf::Vector2f(std::cos(toRadians(shipRotation + 180)) * playerTurnSpeed, std::sin(toRadians(shipRotation + 180)) * playerTurnSpeed);			//Turn clockwise.
 			else
-				vel += sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.
+				velAdjustment = sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.
 		}
 		else
 		{
 			if (leftStickAngle > shipRotation)
 			
-				vel += sf::Vector2f(std::cos(toRadians(shipRotation + 180)) * playerTurnSpeed, std::sin(toRadians(shipRotation + 180)) * playerTurnSpeed);			//Turn clockwise.
+				velAdjustment = sf::Vector2f(std::cos(toRadians(shipRotation + 180)) * playerTurnSpeed, std::sin(toRadians(shipRotation + 180)) * playerTurnSpeed);			//Turn clockwise.
 			else
-				vel += sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.		
+				velAdjustment = sf::Vector2f(std::cos(toRadians(shipRotation)) * playerTurnSpeed, std::sin(toRadians(shipRotation)) * playerTurnSpeed);			//Turn counter clockwise.		
 		}
+
+		velAdjustment = (velAdjustment * (1- speed / playerMaxSpeed)) + (velAdjustment * 1.2f);
+		vel += velAdjustment;
 
 
 
@@ -305,7 +334,7 @@ void Player::update()
 	shield.setRotation(rightStickAngle + 180);
 	shield.setPosition(pos);
 
-	tailPtr->update(pos, sf::Vector2f(0,0));
+	tailPtr-> update(pos, -vel * (1- (speed/playerMaxSpeed)) * 1.6f);
 
 
 	if (playerDead && (explotionPtr != NULL && explotionPtr->update(pos, vel * 0.6f) == false)) 	//2.0f scaler for cool effect.
@@ -336,14 +365,7 @@ void Player::update()
 
 void Player::draw()
 {
-	if(!playerDead)
-	{
-		window.draw(shield);
-	}
 	tailPtr->draw();
-	window.draw(body);
-	window.draw(boostIndicator);
-
 
 	if (playerDead && explotionPtr != NULL)
 	{
@@ -364,6 +386,13 @@ void Player::draw()
 			mines[i] ->draw();
 		}
 	} 
+
+	window.draw(body);
+	window.draw(boostIndicator);
+	if(!playerDead)
+	{
+		window.draw(shield);
+	}
 }
 
 Player::~Player()
