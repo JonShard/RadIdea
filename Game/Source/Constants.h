@@ -28,7 +28,7 @@ const float playerMaxSpeed = 1500;
 const float playerMinSpeed = 6;	//600
 const float playerAcc = 25;
 const float playerDeAcc = 0.98f;
-const float playerTurnSpeed = 35;
+const float playerTurnSpeed = 40;
 const int maxPlayers = 4;
 const sf::Color playerDeadColor = sf::Color(30, 30, 30, 10);
 const sf::Color playerColor[4] = {	sf::Color(51, 102, 255),
@@ -52,7 +52,7 @@ const int MAXMINES = 20;
 const float MINECOST = 0.0f;
 const float MINEROTATION = 0.01f;
 const float MINEDEACC = 0.97f;			
-const float MINELIFETIME = 8;
+const float MINELIFETIME = 3;
 const float MINESCALE = 1;
 const float MINERADIUS = 200;
 
